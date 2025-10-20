@@ -1,6 +1,6 @@
 ---
 name: rails-development
-description: Ruby on Rails development conventions and workflows. Automatically load this skill when working in Rails projects (detected by Gemfile, app/ directory, config/application.rb, or Rails-specific files) or performing Rails-related development tasks, including writing controllers/models/views, creating tests with RSpec, formatting code with RuboCop, running migrations, working with ActiveRecord models, defining routes, using helpers/concerns, implementing service objects, or any Rails development work - even if "Rails" is not explicitly mentioned in the request. Apply when encountering Rails-specific terms like ActiveRecord, ActionController, ActionView, ActiveJob, ActionMailer, or Rails console.
+description: Ruby on Rails development conventions and workflows. Automatically load when working in Rails projects (detected by Gemfile, config.ru, app/ directory, config/application.rb, bin/rails, or Rails directories like lib/, db/, spec/) or Rails-specific terms (ActiveRecord, ActionController, ActionView, RSpec, RuboCop) - even if "Rails" not explicitly mentioned.
 ---
 
 # Rails Development
@@ -8,14 +8,6 @@ description: Ruby on Rails development conventions and workflows. Automatically 
 ## Overview
 
 Comprehensive Ruby on Rails development guidelines covering development environment setup, code style, testing with RSpec, and documentation practices.
-
-**Environment Detection**: This skill applies to Ruby on Rails projects, typically identified by:
-- `Gemfile` with Rails gem dependencies
-- Standard Rails directory structure (`app/`, `config/`, `db/`, `spec/` or `test/`)
-- Rails configuration files (`config/application.rb`, `config/routes.rb`)
-- Rails-specific files (controllers, models, views, migrations, etc.)
-
-**Important**: Always apply this skill when working in a Rails project context, even if the user doesn't explicitly mention "Rails" in their request.
 
 ## Environment Setup
 
