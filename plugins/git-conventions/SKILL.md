@@ -1,6 +1,6 @@
 ---
 name: git-conventions
-description: Git commit message conventions and workflows. Use when providing git commit messages, working with version control, or managing repository commits with GPG signing.
+description: Git commit message conventions following Conventional Commits. **Provides commit messages only - does not execute git commands unless explicitly requested.** Use for commit message generation and GPG signing guidance.
 ---
 
 # Git Conventions
