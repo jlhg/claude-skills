@@ -34,12 +34,7 @@ cp -r rails-development .claude/skills/
 
 ### Restart Claude Code
 
-After installation, restart Claude Code to load the new skills:
-
-```bash
-# If Claude Code is running, restart it
-# Skills will be automatically discovered and loaded
-```
+After installation, restart Claude Code to load the new skills.
 
 ## License
 
