@@ -25,11 +25,11 @@ Then browse and install skills using the `/plugin` menu.
 
 ```bash
 # For personal use (all projects)
-cp -r development-preferences git-conventions python-development rails-development ~/.claude/skills/
+cp -r plugins/* ~/.claude/skills/
 
 # For project-specific use
 mkdir -p .claude/skills
-cp -r rails-development .claude/skills/
+cp -r plugins/rails-development .claude/skills/
 ```
 
 ### Restart Claude Code
