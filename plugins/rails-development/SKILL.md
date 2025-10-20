@@ -1,6 +1,6 @@
 ---
 name: rails-development
-description: Ruby on Rails development conventions and workflows. Use when working with Rails projects including environment setup, RuboCop style enforcement, RSpec testing, and documentation updates.
+description: Ruby on Rails development conventions and workflows. Automatically load this skill when working in Rails projects or performing Rails-related development tasks, including writing controllers/models/views, creating tests with RSpec, formatting code with RuboCop, running migrations, or any Rails development work - even if "Rails" is not explicitly mentioned in the request.
 ---
 
 # Rails Development

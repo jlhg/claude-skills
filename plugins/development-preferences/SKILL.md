@@ -1,6 +1,6 @@
 ---
 name: development-preferences
-description: General development preferences for code, documentation, and communication style. Use when writing code, creating documentation, or working on software development tasks to follow preferred conventions for Chinese writing style, data handling, and information retrieval.
+description: General development preferences for code, documentation, and communication style. Always apply this skill for any software development task, including coding, documentation, technical writing, or answering technical questions. Enforces Chinese writing style conventions, data handling best practices, and information retrieval guidelines.
 ---
 
 # Development Preferences

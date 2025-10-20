@@ -1,6 +1,6 @@
 ---
 name: python-development
-description: Python development conventions and packaging guidelines. Use when working with Python projects, especially for PyPI package publishing with hatchling build system.
+description: Python development conventions and packaging guidelines. Automatically load this skill when working with Python code or Python projects, including writing Python scripts, creating packages, publishing to PyPI with hatchling, managing dependencies, or any Python development work - even if "Python" is not explicitly mentioned in the request.
 ---
 
 # Python Development
