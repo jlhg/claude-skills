@@ -21,43 +21,15 @@ Add this repository to your Claude Code plugin marketplace:
 
 Then browse and install skills using the `/plugin` menu.
 
-### For Personal Use (All Projects)
-
-Copy skills to your home directory:
+### Manual Installation
 
 ```bash
-# Copy all skills
+# For personal use (all projects)
 cp -r development-preferences git-conventions python-development rails-development ~/.claude/skills/
 
-# Or copy specific skills
-cp -r development-preferences ~/.claude/skills/
-cp -r git-conventions ~/.claude/skills/
-```
-
-### For Project-Specific Use
-
-Copy skills to your project directory:
-
-```bash
-# Create project skills directory
+# For project-specific use
 mkdir -p .claude/skills
-
-# Copy specific skills (e.g., Rails projects)
 cp -r rails-development .claude/skills/
-cp -r git-conventions .claude/skills/
-```
-
-### Verify Installation
-
-```bash
-# List personal skills
-ls ~/.claude/skills/
-
-# List project skills (if in a project directory)
-ls .claude/skills/
-
-# View a specific skill
-cat ~/.claude/skills/git-conventions/SKILL.md
 ```
 
 ### Restart Claude Code
@@ -69,36 +41,6 @@ After installation, restart Claude Code to load the new skills:
 # Skills will be automatically discovered and loaded
 ```
 
-## How It Works
-
-Claude Code automatically discovers and uses these skills based on your requests:
-
-- **Automatic activation:** Skills are model-invoked - Claude decides when to use them based on the skill description and your request
-- **No explicit invocation needed:** Simply work on your tasks naturally
-- **Progressive loading:** Claude loads only the necessary information when needed
-
-## Repository Structure
-
-```
-claude-skills/
-├── .claude-plugin/
-│   └── marketplace.json
-├── development-preferences/
-├── git-conventions/
-├── rails-development/
-├── python-development/
-├── LICENSE
-└── README.md
-```
-
-## Benefits
-
-- **Modular:** Each skill is independent and easy to maintain
-- **Efficient:** Claude loads only relevant skills, saving context window
-- **Precise triggering:** Skills activate based on task type
-- **Shareable:** Commit skills to git and share with your team
-- **Extensible:** Easy to add more skills for other languages or frameworks
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the [MIT License](LICENSE).
