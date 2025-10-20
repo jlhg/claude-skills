@@ -15,10 +15,10 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./development-preferences",
-        "./git-conventions",
-        "./python-development",
-        "./rails-development"
+        "./plugins/development-preferences",
+        "./plugins/git-conventions",
+        "./plugins/python-development",
+        "./plugins/rails-development"
       ]
     }
   ]
