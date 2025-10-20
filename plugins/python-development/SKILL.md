@@ -1,6 +1,6 @@
 ---
-name: python-development
-description: Python development conventions and packaging guidelines. Automatically load when working with Python projects (detected by .py files, pyproject.toml, requirements.txt, setup.py, poetry.lock, Pipfile, __init__.py, tox.ini, pytest.ini, environment.yml, or Python directories like src/, tests/, dist/) or Python-specific terms (pip, venv, pytest, Django, Flask, FastAPI, pandas) - even if "Python" not explicitly mentioned.
+name: Developing Python Projects
+description: Provides Python development conventions and packaging guidelines for PyPI publishing. Automatically loads when working with Python projects (detected by common Python files like .py, pyproject.toml, requirements.txt, or Python-specific terms like pip, pytest, Django, Flask, FastAPI, pandas) even if Python is not explicitly mentioned.
 ---
 
 # Python Development

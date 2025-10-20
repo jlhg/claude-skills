@@ -1,6 +1,6 @@
 ---
-name: development-preferences
-description: General development preferences for code, documentation, and communication style. Apply for ANY software development task across all languages and frameworks. Enforces Traditional Chinese (Taiwan) writing conventions, data handling best practices, and security guidelines. Foundational skill for all development work.
+name: Managing Development Preferences
+description: Provides general development preferences for code, documentation, and communication style. Applies to any software development task across all languages and frameworks. Enforces Traditional Chinese (Taiwan) writing conventions, data handling best practices, and security guidelines. Used as foundational skill for all development work.
 ---
 
 # Development Preferences
@@ -27,7 +27,7 @@ Example: 使用 Python (version 3.11) 開發，確保相容性。
 
 ## Information Retrieval
 
-- Prioritize recent information (2025 and later) when searching or providing data
+- Prioritize recent information when searching or providing data
 - Use web search tools for current events and rapidly changing information
 - Always verify facts from reliable sources rather than making assumptions
 - If unable to verify information, explicitly state uncertainty

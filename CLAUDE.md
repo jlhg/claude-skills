@@ -13,7 +13,8 @@ Skills use a three-level loading system:
 1. **Metadata (description)** - Always in context (~50 words)
    - Determines WHEN to load
    - Keep concise: list only common file patterns
-2. **SKILL.md body** - Loaded when triggered (<5k words)
+   - Use third person for system compatibility
+2. **SKILL.md body** - Loaded when triggered (<500 lines)
    - Focus on HOW to use
    - NO trigger conditions or "Auto-Loading" sections
 3. **Bundled resources** - Loaded as needed
@@ -23,10 +24,11 @@ Skills use a three-level loading system:
 
 ### ✅ DO
 
-- Keep metadata under 60 words
+- Keep description under 1024 characters
+- Use gerund form for skill names (e.g., "Processing PDFs")
+- Write descriptions in third person
 - Focus body on workflows
 - Remove trigger conditions from body
-- Use imperative form (not second person)
 
 ### ❌ DON'T
 

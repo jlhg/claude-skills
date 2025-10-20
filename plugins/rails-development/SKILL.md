@@ -1,6 +1,6 @@
 ---
-name: rails-development
-description: Ruby on Rails development conventions and workflows. Automatically load when working in Rails projects (detected by Gemfile, config.ru, app/ directory, config/application.rb, bin/rails, or Rails directories like lib/, db/, spec/) or Rails-specific terms (ActiveRecord, ActionController, ActionView, RSpec, RuboCop) - even if "Rails" not explicitly mentioned.
+name: Developing Rails Applications
+description: Provides Ruby on Rails development conventions and workflows including RSpec testing, RuboCop formatting, and best practices. Automatically loads when working in Rails projects (detected by common Rails files like Gemfile, config.ru, app/ directory, or Rails-specific terms like ActiveRecord, RSpec, RuboCop) even if Rails is not explicitly mentioned.
 ---
 
 # Rails Development
