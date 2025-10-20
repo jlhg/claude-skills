@@ -7,7 +7,7 @@ description: Git commit message conventions following Conventional Commits. **Pr
 
 ## Overview
 
-Follow Conventional Commits specification for all commit messages with GPG signing requirements.
+Follow Conventional Commits specification for all commit messages. GPG signing guidance provided based on user's git configuration.
 
 ## Commit Message Guidelines
 
@@ -41,8 +41,7 @@ Default behavior:
 1. Analyze the changes being made
 2. Choose the appropriate commit type from references
 3. Write a clear, descriptive commit message
-4. Present the commit message to the user
-5. Remind user to sign with GPG key
+4. Present the commit message to the user (without command examples)
 
 **Do NOT:**
 - Run `git add` unless user explicitly asks
@@ -56,32 +55,28 @@ Default behavior:
 
 Example output format:
 ```
-Here's your commit message:
-
 feat(auth): add JWT token refresh mechanism
 
 Implement automatic token refresh before expiration to improve
 user experience. Tokens are refreshed 5 minutes before expiry.
 
 Closes #123
-
-You can commit with:
-git commit -S -m "feat(auth): add JWT token refresh mechanism"
 ```
 
 ## GPG Signing
 
-All commits must be signed with GPG key. Remind users to use:
+**Only relevant when Claude executes git commands.**
 
-```bash
-git commit -S -m "commit message"
-```
+When the user explicitly requests Claude to execute git commit commands:
 
-Or configure automatic signing:
+1. Check if GPG signing is enabled:
+   ```bash
+   git config --get commit.gpgsign
+   ```
 
-```bash
-git config --global commit.gpgsign true
-```
+2. Use the appropriate command:
+   - If output is `true`: Use `git commit -S -m "message"`
+   - Otherwise: Use `git commit -m "message"`
 
 ## Resources
 
