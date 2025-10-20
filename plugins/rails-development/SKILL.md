@@ -9,9 +9,7 @@ description: Ruby on Rails development conventions and workflows. Use when worki
 
 Comprehensive Ruby on Rails development guidelines covering development environment setup, code style, testing with RSpec, and documentation practices.
 
-## Development Environment
-
-### Environment Setup
+## Environment Setup
 
 Access Rails development environment using your project's setup (Docker, local, etc.).
 
@@ -41,6 +39,8 @@ Or use the short form:
 ```bash
 rubocop <file_or_directory> -a
 ```
+
+## Development Best Practices
 
 ### Use Existing Helper Methods
 
@@ -84,52 +84,6 @@ end
 - Reduces duplication
 - Centralizes common logic
 - Easier to refactor and maintain
-
-## Testing
-
-### RSpec Workflow
-
-Run RSpec tests using your project's test environment setup.
-
-Test execution patterns:
-- **Run all specs**: Execute the entire test suite
-- **Run specific spec file**: Test a single file (e.g., `spec/models/user_spec.rb`)
-- **Run specific example**: Test a specific line in a spec file (e.g., `spec/models/user_spec.rb:42`)
-
-Ensure tests run in the test environment (`RAILS_ENV=test`) and use `bundle exec rspec` to execute tests through the project's gem dependencies.
-
-### RSpec Best Practices
-
-Follow RSpec best practices documented in [rspec-best-practices.md](references/rspec-best-practices.md).
-
-Key principles:
-- Use `describe` with `.` for class methods, `#` for instance methods
-- Use `context` for different scenarios
-- Define shared helpers/mocks in outer `describe` blocks
-- Use `let` for lazy loading, `let!` for eager loading
-- Reuse outer `before` blocks in nested contexts
-- Use `match(...)` and `hash_including(...)` for validations
-- Keep test descriptions clear and concise
-
-## Documentation
-
-After implementing features or changes:
-
-1. Update relevant documentation in the project's documentation directory
-2. Keep documentation in sync with code changes
-3. Include examples and usage guidelines
-4. Update API documentation if endpoints change
-
-## Architecture Updates
-
-When making architectural changes or adding new development conventions:
-
-1. Check if project's `CLAUDE.md` needs updates
-2. Document new patterns or conventions
-3. Update skill files if necessary
-4. Communicate changes to team
-
-## Database & Concurrency
 
 ### Race Conditions in Validations
 
@@ -184,6 +138,52 @@ end
 - Model validations alone cannot prevent race conditions
 - Always consider concurrent access when implementing limits or constraints
 - Use database-level mechanisms (locks, constraints) for critical validations
+
+## Testing
+
+### RSpec Workflow
+
+Run RSpec tests using your project's test environment setup.
+
+Test execution patterns:
+- **Run all specs**: Execute the entire test suite
+- **Run specific spec file**: Test a single file (e.g., `spec/models/user_spec.rb`)
+- **Run specific example**: Test a specific line in a spec file (e.g., `spec/models/user_spec.rb:42`)
+
+Ensure tests run in the test environment (`RAILS_ENV=test`) and use `bundle exec rspec` to execute tests through the project's gem dependencies.
+
+### RSpec Best Practices
+
+Follow RSpec best practices documented in [rspec-best-practices.md](references/rspec-best-practices.md).
+
+Key principles:
+- Use `describe` with `.` for class methods, `#` for instance methods
+- Use `context` for different scenarios
+- Define shared helpers/mocks in outer `describe` blocks
+- Use `let` for lazy loading, `let!` for eager loading
+- Reuse outer `before` blocks in nested contexts
+- Use `match(...)` and `hash_including(...)` for validations
+- Keep test descriptions clear and concise
+
+## Project Maintenance
+
+### Documentation
+
+After implementing features or changes:
+
+1. Update relevant documentation in the project's documentation directory
+2. Keep documentation in sync with code changes
+3. Include examples and usage guidelines
+4. Update API documentation if endpoints change
+
+### Architecture Updates
+
+When making architectural changes or adding new development conventions:
+
+1. Check if project's `CLAUDE.md` needs updates
+2. Document new patterns or conventions
+3. Update skill files if necessary
+4. Communicate changes to team
 
 ## Resources
 
