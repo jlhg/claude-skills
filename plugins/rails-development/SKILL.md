@@ -1,28 +1,26 @@
 ---
 name: rails-development
-description: Ruby on Rails development conventions and workflows. Use when working with Rails projects including Docker setup, RuboCop style enforcement, RSpec testing, and documentation updates.
+description: Ruby on Rails development conventions and workflows. Use when working with Rails projects including environment setup, RuboCop style enforcement, RSpec testing, and documentation updates.
 ---
 
 # Rails Development
 
 ## Overview
 
-Comprehensive Ruby on Rails development guidelines covering Docker environment, code style, testing with RSpec, and documentation practices.
+Comprehensive Ruby on Rails development guidelines covering development environment setup, code style, testing with RSpec, and documentation practices.
 
 ## Development Environment
 
-### Docker Setup
+### Environment Setup
 
-Access Rails development environment using:
+Access Rails development environment using your project's setup (Docker, local, etc.).
 
-```bash
-docker compose -f compose.local.yaml exec -it web <command>
-```
+Common tasks to run in the development environment:
+- **Rails console**: Access interactive Rails console for debugging and testing
+- **Database migrations**: Run pending migrations to update database schema
+- **Bundle install**: Install or update Ruby gem dependencies
 
-Common commands:
-- Rails console: `docker compose -f compose.local.yaml exec -it web rails console`
-- Database migrations: `docker compose -f compose.local.yaml exec -it web rails db:migrate`
-- Bundle install: `docker compose -f compose.local.yaml exec -it web bundle install`
+When running these commands, use the appropriate method for your project (e.g., through Docker, directly on local machine, or via project-specific scripts).
 
 ## Code Style
 
@@ -48,23 +46,14 @@ rubocop <file_or_directory> -a
 
 ### RSpec Workflow
 
-Run tests using Docker:
+Run RSpec tests using your project's test environment setup.
 
-```bash
-docker compose -f compose.local.yaml run --rm -e RAILS_ENV=test web bundle exec rspec <spec_file>
-```
+Test execution patterns:
+- **Run all specs**: Execute the entire test suite
+- **Run specific spec file**: Test a single file (e.g., `spec/models/user_spec.rb`)
+- **Run specific example**: Test a specific line in a spec file (e.g., `spec/models/user_spec.rb:42`)
 
-Examples:
-```bash
-# Run all specs
-docker compose -f compose.local.yaml run --rm -e RAILS_ENV=test web bundle exec rspec
-
-# Run specific spec file
-docker compose -f compose.local.yaml run --rm -e RAILS_ENV=test web bundle exec rspec spec/models/user_spec.rb
-
-# Run specific example
-docker compose -f compose.local.yaml run --rm -e RAILS_ENV=test web bundle exec rspec spec/models/user_spec.rb:42
-```
+Ensure tests run in the test environment (`RAILS_ENV=test`) and use `bundle exec rspec` to execute tests through the project's gem dependencies.
 
 ### RSpec Best Practices
 
@@ -83,7 +72,7 @@ Key principles:
 
 After implementing features or changes:
 
-1. Update relevant documentation in `doc/src/`
+1. Update relevant documentation in the project's documentation directory
 2. Keep documentation in sync with code changes
 3. Include examples and usage guidelines
 4. Update API documentation if endpoints change
