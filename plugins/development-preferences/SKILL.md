@@ -1,6 +1,6 @@
 ---
 name: development-preferences
-description: General development preferences for code, documentation, and communication style. Always apply this skill for any software development task, including coding, documentation, technical writing, or answering technical questions. Enforces Chinese writing style conventions, data handling best practices, and information retrieval guidelines.
+description: General development preferences for code, documentation, and communication style. Always apply this skill for ANY software development task, including coding, debugging, refactoring, testing, code review, documentation, technical writing, answering technical questions, writing scripts, building applications, designing APIs, database work, DevOps tasks, or any programming-related activities across all languages and frameworks. Enforces Chinese writing style conventions (Traditional Chinese Taiwan), data handling best practices, security guidelines, and information retrieval guidelines. This is a foundational skill that should be loaded automatically whenever working with code or technical content.
 ---
 
 # Development Preferences
@@ -9,7 +9,17 @@ description: General development preferences for code, documentation, and commun
 
 Define general preferences for software development work including Chinese writing conventions, documentation style, data handling, and tool usage best practices.
 
-**Applicability:** This skill applies when working on software development tasks, including coding, documentation, and technical writing.
+**Applicability:** This skill applies to ALL software development contexts, regardless of programming language, framework, or platform. It provides foundational guidelines that complement language-specific skills.
+
+**Auto-Loading:** This skill should be automatically loaded whenever:
+- Working with code in any programming language
+- Writing or editing technical documentation
+- Performing development tasks (coding, debugging, testing, refactoring, etc.)
+- Answering technical questions
+- Writing scripts or automation
+- Building any software application or service
+
+**Important:** This is a foundational skill that should always be active during development work, even when other specialized skills (Python, Rails, etc.) are also loaded.
 
 ## Chinese Writing Style
 
