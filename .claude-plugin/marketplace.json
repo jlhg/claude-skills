@@ -1,0 +1,25 @@
+{
+  "name": "jlhg-development-skills",
+  "owner": {
+    "name": "Jian-Long Huang",
+    "email": "contact@jlhuang.com"
+  },
+  "metadata": {
+    "description": "Development skills for code conventions, git workflows, and language-specific best practices",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "development-skills",
+      "description": "Collection of development skills including general preferences, git conventions, Python packaging, and Rails workflows",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./development-preferences",
+        "./git-conventions",
+        "./python-development",
+        "./rails-development"
+      ]
+    }
+  ]
+}

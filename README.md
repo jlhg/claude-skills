@@ -7,9 +7,19 @@
 - **rails-development** - Ruby on Rails development workflow and RSpec testing
 - **python-development** - Python packaging and PyPI publishing guidelines
 
-For detailed information about each skill, see the [skills/](skills/) directory.
+For detailed information about each skill, see the individual skill directories.
 
 ## Installation
+
+### Via Plugin Marketplace (Recommended)
+
+Add this repository to your Claude Code plugin marketplace:
+
+```bash
+/plugin marketplace add jlhg/claude-skills
+```
+
+Then browse and install skills using the `/plugin` menu.
 
 ### For Personal Use (All Projects)
 
@@ -17,11 +27,11 @@ Copy skills to your home directory:
 
 ```bash
 # Copy all skills
-cp -r skills/* ~/.claude/skills/
+cp -r development-preferences git-conventions python-development rails-development ~/.claude/skills/
 
 # Or copy specific skills
-cp -r skills/development-preferences ~/.claude/skills/
-cp -r skills/git-conventions ~/.claude/skills/
+cp -r development-preferences ~/.claude/skills/
+cp -r git-conventions ~/.claude/skills/
 ```
 
 ### For Project-Specific Use
@@ -33,8 +43,8 @@ Copy skills to your project directory:
 mkdir -p .claude/skills
 
 # Copy specific skills (e.g., Rails projects)
-cp -r skills/rails-development .claude/skills/
-cp -r skills/git-conventions .claude/skills/
+cp -r rails-development .claude/skills/
+cp -r git-conventions .claude/skills/
 ```
 
 ### Verify Installation
@@ -71,11 +81,13 @@ Claude Code automatically discovers and uses these skills based on your requests
 
 ```
 claude-skills/
-├── skills/
-│   ├── development-preferences/
-│   ├── git-conventions/
-│   ├── rails-development/
-│   └── python-development/
+├── .claude-plugin/
+│   └── marketplace.json
+├── development-preferences/
+├── git-conventions/
+├── rails-development/
+├── python-development/
+├── LICENSE
 └── README.md
 ```
 
