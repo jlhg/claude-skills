@@ -42,6 +42,49 @@ Or use the short form:
 rubocop <file_or_directory> -a
 ```
 
+### Use Existing Helper Methods
+
+Before implementing new logic, check for existing helper methods in the codebase:
+
+**Where to Look:**
+- Base controllers (`ApplicationController`, `AppController`, etc.)
+- Concern modules
+- Application helpers
+- Model concerns
+
+**Common Patterns:**
+- Error rendering helpers (check for standardized error response methods)
+- Type conversion helpers (boolean, integer, etc.)
+- Authentication/authorization helpers
+- Data formatting helpers
+
+**Best Practice:**
+```ruby
+# ❌ Avoid duplicating logic
+def create
+  if model.save
+    # ...
+  else
+    render json: { error: model.errors.full_messages.join(", ") }, status: :bad_request
+  end
+end
+
+# ✅ Use existing helpers if available
+def create
+  if model.save
+    # ...
+  else
+    render_model_error(model)  # Example: if this helper exists in base controller
+  end
+end
+```
+
+**Benefits:**
+- Maintains code consistency
+- Reduces duplication
+- Centralizes common logic
+- Easier to refactor and maintain
+
 ## Testing
 
 ### RSpec Workflow
@@ -85,6 +128,62 @@ When making architectural changes or adding new development conventions:
 2. Document new patterns or conventions
 3. Update skill files if necessary
 4. Communicate changes to team
+
+## Database & Concurrency
+
+### Race Conditions in Validations
+
+Model-level validations that check record counts or uniqueness can suffer from race conditions when multiple requests execute simultaneously.
+
+**Problem Example:**
+```ruby
+# In model validation
+def validate_max_records
+  if associated_records.count >= MAX_COUNT
+    errors.add(:base, :limit_exceeded)
+  end
+end
+
+# Two simultaneous requests can both read count=29, both pass validation,
+# resulting in 31 records despite MAX_COUNT=30
+```
+
+**Solution: Pessimistic Locking**
+
+Use database-level locks to prevent race conditions:
+
+```ruby
+# In controller
+def create
+  ParentModel.transaction do
+    parent = ParentModel.find(id).lock!  # Acquires database lock
+    record = parent.associated_records.new(params)
+
+    if record.save
+      # Success
+    else
+      # Handle validation errors
+    end
+  end
+end
+```
+
+**When to Use:**
+- Creating records with count limits
+- Checking uniqueness constraints
+- Updating shared resources
+- Operations requiring atomicity
+
+**Alternative Approaches:**
+- Database constraints (preferred for simple cases)
+- Unique indexes for uniqueness validation
+- Database check constraints for count limits
+- Optimistic locking for less critical updates
+
+**Key Principle:**
+- Model validations alone cannot prevent race conditions
+- Always consider concurrent access when implementing limits or constraints
+- Use database-level mechanisms (locks, constraints) for critical validations
 
 ## Resources
 
