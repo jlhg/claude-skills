@@ -2,16 +2,24 @@
 
 ## Available Plugins and Skills
 
-This repository contains 2 plugins with 5 skills total.
+This repository contains 3 plugins with 8 skills total.
 
 ### development-skills
 
 Development skills for Git conventions and language-specific best practices
 
-- **development-preferences** - General development preferences and writing style conventions
 - **git-conventions** - Git commit message conventions with Conventional Commits
 - **python-development** - Python packaging and PyPI publishing guidelines
 - **ruby-development** - Ruby and Rails development with RuboCop style guide and RSpec testing
+
+### backend-skills
+
+Backend architecture, deployment, performance optimization, and security best practices
+
+- **backend-architecture** - Backend system architecture design with Redis/Valkey and configuration management
+- **deployment-practices** - Zero-downtime deployment, Cloudflare Tunnel, and database migration strategies
+- **performance-optimization** - Memory management, jemalloc configuration, and performance profiling
+- **web-security** - API rate limiting, authentication architecture, and security best practices
 
 ### agent-skills
 

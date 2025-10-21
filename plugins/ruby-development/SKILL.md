@@ -1,6 +1,6 @@
 ---
 name: Ruby Development
-description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, and Rails best practices. Use when developing Ruby or Rails applications, writing tests, formatting code, or when user mentions Ruby, Rails, RSpec, RuboCop, or Active Record.
+description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, Rails best practices, CurrentAttributes usage, input normalization, frozen string literals, and HTTP client (Faraday) integration. Use when developing Ruby or Rails applications, writing tests, formatting code, handling user input, optimizing string memory, making HTTP requests, or when user mentions Ruby, Rails, RSpec, RuboCop, Active Record, CurrentAttributes, normalizes, Faraday, or HTTP client.
 ---
 
 # Ruby Development
@@ -203,7 +203,44 @@ When making architectural changes or adding new development conventions:
 2. Update skill files if necessary
 3. Communicate changes to team
 
+## Advanced Rails Features
+
+### CurrentAttributes
+
+Rails provides `CurrentAttributes` for managing per-request global state safely. See [CurrentAttributes Guide](references/current-attributes.md) for:
+- Setting up request-scoped attributes
+- Use cases (current user, timezone, locale)
+- Thread-safety considerations
+- Testing strategies
+
+### Input Normalization
+
+Rails 7.1+ introduces `normalizes` for automatic input sanitization. See [Input Normalization Guide](references/input-normalization.md) for:
+- Using `normalizes` for automatic trimming, downcasing
+- Handling nil and empty values
+- Query auto-normalization
+- Backward compatibility strategies
+
+### Frozen String Literals
+
+Enable frozen string literals to optimize memory usage. See [Frozen String Literal Guide](references/frozen-string-literal.md) for:
+- Configuration options
+- Performance benefits
+- Migration strategies
+
+### HTTP Client Integration
+
+Use Faraday for robust HTTP API integration. See [HTTP Client Guide](references/http-client.md) for:
+- Basic and advanced Faraday usage
+- Service class patterns
+- Error handling and retries
+- Testing with WebMock
+
 ## Resources
 
 - [Ruby Style Guide](references/rubocop-ruby-style-guide.adoc) - Comprehensive Ruby style guide maintained by RuboCop community
 - [RSpec Best Practices](references/rspec-best-practices.md) - Comprehensive RSpec testing guidelines
+- [CurrentAttributes Guide](references/current-attributes.md) - Rails per-request global state management
+- [Input Normalization Guide](references/input-normalization.md) - Rails 7.1+ input sanitization
+- [Frozen String Literal Guide](references/frozen-string-literal.md) - Ruby memory optimization
+- [HTTP Client Guide](references/http-client.md) - Faraday HTTP client usage

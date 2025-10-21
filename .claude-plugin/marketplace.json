@@ -15,10 +15,21 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./plugins/development-preferences",
         "./plugins/git-conventions",
         "./plugins/python-development",
         "./plugins/ruby-development"
+      ]
+    },
+    {
+      "name": "backend-skills",
+      "description": "Backend architecture, deployment, performance optimization, and security best practices",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./plugins/backend-architecture",
+        "./plugins/deployment-practices",
+        "./plugins/performance-optimization",
+        "./plugins/web-security"
       ]
     },
     {
