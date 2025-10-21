@@ -181,6 +181,9 @@ Key principles:
 - Use `match(...)` and `hash_including(...)` for validations
 - Keep test descriptions clear and concise
 
+**Additional tips:** [rspec-additional-tips.md](references/rspec-additional-tips.md)
+- Avoid duplicate `before` blocks in nested contexts
+
 ## Project Maintenance
 
 ### Documentation
