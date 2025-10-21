@@ -1,6 +1,6 @@
 ---
-name: Developing Python Projects
-description: Provides Python development conventions and packaging guidelines for PyPI publishing. Automatically loads when working with Python projects (detected by common Python files like .py, pyproject.toml, requirements.txt, or Python-specific terms like pip, pytest, Django, Flask, FastAPI, pandas) even if Python is not explicitly mentioned.
+name: Developing Python Apps
+description: Provides Python development conventions and packaging guidelines for PyPI publishing.
 ---
 
 # Python Development

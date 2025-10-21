@@ -1,6 +1,6 @@
 ---
-name: Managing Development Preferences
-description: Provides general development preferences for code, documentation, and communication style. Applies to any software development task across all languages and frameworks. Enforces Traditional Chinese (Taiwan) writing conventions, data handling best practices, and security guidelines. Used as foundational skill for all development work.
+name: Developing Apps and Writing Docs
+description: Provides general development preferences for code, documentation, and communication style. Used as a foundational skill for all development work.
 ---
 
 # Development Preferences

@@ -1,17 +1,17 @@
 {
-  "name": "jlhg-development-skills",
+  "name": "jlhg-claude-skills",
   "owner": {
     "name": "Jian-Long Huang",
     "email": "contact@jlhuang.com"
   },
   "metadata": {
-    "description": "Development skills for code conventions, git workflows, and language-specific best practices",
+    "description": "jlhg's Claude skills",
     "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "development-skills",
-      "description": "Collection of development skills including general preferences, git conventions, Python packaging, and Rails workflows",
+      "description": "Development skills for Git conventions and language-specific best practices",
       "source": "./",
       "strict": false,
       "skills": [
@@ -20,6 +20,15 @@
         "./plugins/python-development",
         "./plugins/rails-development"
       ]
-    }
+    },
+		{
+      "name": "agent-skills",
+      "description": "Skills for developing and authoring Claude Skills following best practices",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./plugins/skill-development"
+      ]
+		}
   ]
 }

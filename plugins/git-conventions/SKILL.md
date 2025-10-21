@@ -1,13 +1,13 @@
 ---
 name: Following Git Conventions
-description: Provides Git commit message conventions following Conventional Commits specification. Generates commit messages only - does not execute git commands unless explicitly requested. Used for commit message generation and GPG signing guidance.
+description: Provides Git commit message conventions following Conventional Commits specification.
 ---
 
 # Git Conventions
 
 ## Overview
 
-Follow Conventional Commits specification for all commit messages. GPG signing guidance provided based on user's git configuration.
+Follow Conventional Commits specification for all commit messages. Provides GPG signing guidance based on the user's git configuration.
 
 ## Commit Message Guidelines
 
