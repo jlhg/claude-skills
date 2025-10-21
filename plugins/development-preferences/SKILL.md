@@ -1,6 +1,6 @@
 ---
 name: Developing Apps and Writing Docs
-description: Provides development preferences including Chinese writing conventions, code comments, and data handling practices. Use when writing Chinese documentation, handling sensitive data, setting up development workflows, or when user mentions Chinese writing, data handling, or tool usage.
+description: Core development preferences for all coding tasks. Provides Chinese writing conventions, code comments style, and data handling practices. Apply to ALL development work regardless of language or framework.
 ---
 
 # Development Preferences
