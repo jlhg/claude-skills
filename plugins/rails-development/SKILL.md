@@ -1,6 +1,6 @@
 ---
 name: Developing Ruby on Rails Apps
-description: Provides Ruby on Rails development conventions and workflows including RSpec testing, RuboCop formatting, and best practices.
+description: Provides Ruby on Rails development conventions and workflows including RSpec testing, RuboCop formatting, and best practices. Use when developing Rails applications, writing Rails tests, debugging Rails code, or when user mentions Rails, RSpec, RuboCop, or Active Record.
 ---
 
 # Rails Development

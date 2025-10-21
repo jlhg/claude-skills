@@ -1,21 +1,13 @@
 ---
 name: Developing Python Apps
-description: Provides Python development conventions and packaging guidelines for PyPI publishing.
+description: Provides Python packaging and PyPI publishing guidelines including hatchling configuration, twine workflows, and pyproject.toml setup. Use when publishing Python packages, configuring PyPI uploads, debugging packaging issues, or when user mentions PyPI, twine, hatchling, or pyproject.toml.
 ---
 
 # Python Development
 
 ## Overview
 
-Python development guidelines focusing on package configuration and PyPI publishing best practices.
-
-**Common Python Frameworks & Tools**:
-- Web: Django, Flask, FastAPI, Tornado, Pyramid
-- Testing: pytest, unittest, nose, tox
-- Package Management: pip, poetry, pipenv, conda
-- Code Quality: black, pylint, flake8, ruff, mypy, isort
-- Data Science: pandas, numpy, scipy, matplotlib, jupyter
-- Async: asyncio, aiohttp, trio
+Guidelines for Python package configuration and PyPI publishing workflows.
 
 ## PyPI Publishing
 

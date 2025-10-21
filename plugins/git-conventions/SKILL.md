@@ -1,13 +1,16 @@
 ---
 name: Following Git Conventions
-description: Provides Git commit message conventions following Conventional Commits specification.
+description: Generates Conventional Commits messages and provides .gitignore best practices. Use when writing commit messages, reviewing git diffs, setting up .gitignore files, or when user mentions commits, git conventions, or gitignore.
 ---
 
 # Git Conventions
 
 ## Overview
 
-Follow Conventional Commits specification for all commit messages. Provides GPG signing guidance based on the user's git configuration.
+Follow Git best practices including:
+- Conventional Commits specification for all commit messages
+- GPG signing guidance based on the user's git configuration
+- .gitignore configuration and best practices
 
 ## Commit Message Guidelines
 
@@ -78,6 +81,40 @@ When the user explicitly requests Claude to execute git commit commands:
    - If output is `true`: Use `git commit -S -m "message"`
    - Otherwise: Use `git commit -m "message"`
 
+## .gitignore Best Practices
+
+### Common Patterns
+
+Typically exclude:
+- `*.log` - Log files
+- `node_modules/`, `vendor/` - Dependency directories
+- `.env` - Environment files with secrets
+- `.DS_Store`, `Thumbs.db` - OS-specific files
+- `*.pyc`, `__pycache__/` - Python compiled files
+- `dist/`, `build/` - Build artifacts
+
+### Key Commands
+
+```bash
+git check-ignore -v <filename>  # Check if file is ignored
+git rm --cached <filename>      # Stop tracking file
+```
+
+### Security Warning
+
+Do NOT rely solely on `.gitignore` for sensitive data protection. Use tools like `git-secrets` or `gitleaks`.
+
+### Detailed References
+
+**Complete guide**: See [gitignore-guide.md](references/gitignore-guide.md) for format, syntax, precedence rules, and workflows
+
+**Templates**: See [github-gitignore.md](references/github-gitignore.md) for GitHub's template collection
+
+**Comprehensive Q&A**: See [the_ultimate_gitignore_guide.md](references/the_ultimate_gitignore_guide.md) for detailed explanations
+
 ## Resources
 
-See [commit-types.md](references/commit-types.md) for complete Conventional Commits type reference.
+- [commit-types.md](references/commit-types.md) - Complete Conventional Commits type reference
+- [gitignore-guide.md](references/gitignore-guide.md) - Complete .gitignore guide with format, syntax, and best practices
+- [github-gitignore.md](references/github-gitignore.md) - GitHub's .gitignore template collection and contribution guidelines
+- [the_ultimate_gitignore_guide.md](references/the_ultimate_gitignore_guide.md) - Comprehensive .gitignore guide in Q&A format
