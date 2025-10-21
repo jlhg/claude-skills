@@ -35,6 +35,8 @@ Generate commit messages that follow Conventional Commits specification:
 - Keep subject line under 72 characters
 - Separate subject from body with a blank line
 - Wrap body at 72 characters
+- Add blank line before bullet lists
+- Align continuation lines in bullet lists with 2-space indentation
 
 ### Workflow
 
@@ -62,6 +64,13 @@ feat(auth): add JWT token refresh mechanism
 
 Implement automatic token refresh before expiration to improve
 user experience. Tokens are refreshed 5 minutes before expiry.
+
+Changes:
+
+- Add TokenRefreshService with automatic refresh logic
+- Update AuthInterceptor to handle token expiration by checking
+  expiry timestamp and triggering refresh 5 minutes before
+- Add retry mechanism for failed API calls due to expired tokens
 
 Closes #123
 ```
