@@ -21,7 +21,7 @@
         "./plugins/rails-development"
       ]
     },
-		{
+    {
       "name": "agent-skills",
       "description": "Skills for developing and authoring Claude Skills following best practices",
       "source": "./",
@@ -29,6 +29,6 @@
       "skills": [
         "./plugins/skill-development"
       ]
-		}
+    }
   ]
 }
