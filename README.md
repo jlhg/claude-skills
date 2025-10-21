@@ -11,7 +11,7 @@ Development skills for Git conventions and language-specific best practices
 - **development-preferences** - General development preferences and writing style conventions
 - **git-conventions** - Git commit message conventions with Conventional Commits
 - **python-development** - Python packaging and PyPI publishing guidelines
-- **rails-development** - Ruby on Rails development workflow and RSpec testing
+- **ruby-development** - Ruby and Rails development with RuboCop style guide and RSpec testing
 
 ### agent-skills
 
@@ -41,7 +41,7 @@ cp -r plugins/* ~/.claude/skills/
 
 # For project-specific use
 mkdir -p .claude/skills
-cp -r plugins/rails-development .claude/skills/
+cp -r plugins/ruby-development .claude/skills/
 ```
 
 ### Restart Claude Code

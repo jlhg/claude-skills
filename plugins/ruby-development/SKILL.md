@@ -1,13 +1,13 @@
 ---
-name: Developing Ruby on Rails Apps
-description: Provides Ruby on Rails development conventions and workflows including RSpec testing, RuboCop formatting, and best practices. Use when developing Rails applications, writing Rails tests, debugging Rails code, or when user mentions Rails, RSpec, RuboCop, or Active Record.
+name: Ruby Development
+description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, and Rails best practices. Use when developing Ruby or Rails applications, writing tests, formatting code, or when user mentions Ruby, Rails, RSpec, RuboCop, or Active Record.
 ---
 
-# Rails Development
+# Ruby Development
 
 ## Overview
 
-Comprehensive Ruby on Rails development guidelines covering development environment setup, code style, testing with RSpec, and documentation practices.
+Comprehensive Ruby and Ruby on Rails development guidelines covering code style with RuboCop and Ruby style guide, testing with RSpec, Rails environment setup, and documentation practices.
 
 ## Environment Setup
 
@@ -39,6 +39,22 @@ Or use the short form:
 ```bash
 rubocop <file_or_directory> -a
 ```
+
+### Ruby Style Guide
+
+Follow Ruby community style conventions documented in the comprehensive [Ruby Style Guide](references/rubocop-ruby-style-guide.adoc).
+
+This guide covers:
+- Source code layout and formatting
+- Syntax conventions and best practices
+- Naming conventions
+- Comments and documentation
+- Classes, modules, and methods
+- Collections and strings
+- Regular expressions
+- Metaprogramming
+
+The style guide is maintained by the RuboCop community and reflects real-world Ruby programming practices.
 
 ## Development Best Practices
 
@@ -186,4 +202,5 @@ When making architectural changes or adding new development conventions:
 
 ## Resources
 
+- [Ruby Style Guide](references/rubocop-ruby-style-guide.adoc) - Comprehensive Ruby style guide maintained by RuboCop community
 - [RSpec Best Practices](references/rspec-best-practices.md) - Comprehensive RSpec testing guidelines
