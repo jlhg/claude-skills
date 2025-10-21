@@ -1,11 +1,23 @@
 # Claude Skills
 
-## Available Skills
+## Available Plugins and Skills
+
+This repository contains 2 plugins with 5 skills total.
+
+### development-skills
+
+Development skills for Git conventions and language-specific best practices
 
 - **development-preferences** - General development preferences and writing style conventions
 - **git-conventions** - Git commit message conventions with Conventional Commits
-- **rails-development** - Ruby on Rails development workflow and RSpec testing
 - **python-development** - Python packaging and PyPI publishing guidelines
+- **rails-development** - Ruby on Rails development workflow and RSpec testing
+
+### agent-skills
+
+Skills for developing and authoring Claude Skills following best practices
+
+- **skill-development** - Guidelines and best practices for authoring effective Claude Skills
 
 For detailed information about each skill, see the individual skill directories.
 
