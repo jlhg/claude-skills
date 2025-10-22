@@ -20,6 +20,40 @@ Common tasks to run in the development environment:
 
 When running these commands, use the appropriate method for your project (e.g., through Docker, directly on local machine, or via project-specific scripts).
 
+### Handling Deprecation Warnings
+
+When you encounter deprecation warnings during development or testing, follow these steps to identify and fix them.
+
+**Identifying warnings:**
+
+Deprecation warnings typically appear in test output or logs:
+```
+warning: deprecated feature X is used. Use Y instead.
+```
+
+**Reproducing warnings for debugging:**
+
+If you need to see all deprecation warnings to fix them systematically:
+
+```bash
+# Run tests with deprecation warnings enabled
+RUBYOPT="-W:deprecated" bundle exec rspec
+
+# Or for a specific file
+ruby -W:deprecated spec/models/user_spec.rb
+```
+
+**Fixing approach:**
+1. Locate the source file and line number from the warning message
+2. Replace deprecated syntax/API with the recommended alternative
+3. Run tests again to verify the warning is resolved
+4. Repeat for remaining warnings
+
+**Best practices:**
+- Fix deprecation warnings as they appear during development
+- Don't modify project configuration files unless specifically required
+- Use temporary `-W:deprecated` flag only when needed for debugging
+
 ## Code Style
 
 ### RuboCop
