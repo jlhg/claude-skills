@@ -215,8 +215,19 @@ Key principles:
 - Use `match(...)` and `hash_including(...)` for validations
 - Keep test descriptions clear and concise
 
-**Additional tips:** [rspec-additional-tips.md](references/rspec-additional-tips.md)
-- Avoid duplicate `before` blocks in nested contexts
+### Advanced RSpec Features
+
+**Composable Matchers:** [new-in-rspec-3-composable-matchers.md](references/new-in-rspec-3-composable-matchers.md)
+- RSpec 3+ composable matchers for powerful, less brittle expectations
+- Pass matchers as arguments to other matchers
+- Use matcher aliases for better readability (e.g., `a_hash_including`, `a_string_starting_with`)
+- Compound matcher expressions with `and`/`or`
+- Examples with `match`, `include`, `contain_exactly`, and more
+
+**RSpec Official Features:** [rspec-features/](references/rspec-features/)
+- Comprehensive RSpec feature documentation (versions 3.13 and 8.0)
+- Detailed guides on filtering, helper methods, metadata, configuration
+- RSpec Core and RSpec Expectations feature references
 
 ## Project Maintenance
 
@@ -296,6 +307,8 @@ Use Faraday for robust HTTP API integration. See [HTTP Client Guide](references/
 
 - [Ruby Style Guide](references/rubocop-ruby-style-guide.adoc) - Comprehensive Ruby style guide maintained by RuboCop community
 - [RSpec Best Practices](references/rspec-best-practices.md) - Comprehensive RSpec testing guidelines
+- [RSpec Composable Matchers](references/new-in-rspec-3-composable-matchers.md) - RSpec 3 composable matchers feature guide
+- [RSpec Features](references/rspec-features/) - Official RSpec feature documentation (versions 3.13 and 8.0)
 - [CurrentAttributes Guide](references/current-attributes.md) - Rails per-request global state management
 - [Input Normalization Guide](references/input-normalization.md) - Rails 7.1+ input sanitization
 - [Frozen String Literal Guide](references/frozen-string-literal.md) - Ruby memory optimization
