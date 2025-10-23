@@ -15,6 +15,7 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./plugins/development-workflow",
         "./plugins/git-conventions",
         "./plugins/python-development",
         "./plugins/ruby-development"

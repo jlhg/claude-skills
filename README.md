@@ -2,12 +2,13 @@
 
 ## Available Plugins and Skills
 
-This repository contains 3 plugins with 8 skills total.
+This repository contains 3 plugins with 9 skills total.
 
 ### development-skills
 
 Development skills for Git conventions and language-specific best practices
 
+- **development-workflow** - Development workflow guidelines with incremental progress and quality standards
 - **git-conventions** - Git commit message conventions with Conventional Commits
 - **python-development** - Python packaging and PyPI publishing guidelines
 - **ruby-development** - Ruby and Rails development with RuboCop style guide and RSpec testing
