@@ -89,6 +89,14 @@ Secure and scalable authentication system design. See [Authentication Guide](ref
   - Audit trail (PostgreSQL marking)
   - Batch revocation (password change, suspicious activity)
 
+- **Frontend Token Storage**
+  - Browser storage options comparison (localStorage vs sessionStorage vs cookies vs memory)
+  - Recommended: httpOnly cookie implementation
+  - High-security: memory-only storage with refresh tokens
+  - OAuth 2.0 integration patterns
+  - CORS configuration for cookie-based auth
+  - Frontend security checklist
+
 - **Security Best Practices**
   - Token entropy (256-bit)
   - Short expiration time
