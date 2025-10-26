@@ -1,6 +1,6 @@
 ---
 name: Ruby Development
-description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, Rails best practices, CurrentAttributes usage, input normalization, frozen string literals, and HTTP client (Faraday) integration. Use when developing Ruby or Rails applications, writing tests, formatting code, handling user input, optimizing string memory, making HTTP requests, or when user mentions Ruby, Rails, RSpec, RuboCop, Active Record, CurrentAttributes, normalizes, Faraday, or HTTP client.
+description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, deprecation warning tracking, Rails best practices, CurrentAttributes usage, input normalization, frozen string literals, and HTTP client (Faraday) integration. Use when developing Ruby or Rails applications, writing tests, formatting code, handling deprecation warnings, preparing for Ruby/Rails upgrades, optimizing performance, or when user mentions Ruby, Rails, RSpec, RuboCop, deprecation, Active Record, CurrentAttributes, normalizes, Faraday, or HTTP client.
 ---
 
 # Ruby Development
@@ -20,39 +20,31 @@ Common tasks to run in the development environment:
 
 When running these commands, use the appropriate method for your project (e.g., through Docker, directly on local machine, or via project-specific scripts).
 
-### Handling Deprecation Warnings
+### Deprecation Warning Tracking
 
-When you encounter deprecation warnings during development or testing, follow these steps to identify and fix them.
+Rails projects benefit from systematic deprecation warning tracking to prepare for upgrades.
 
-**Identifying warnings:**
-
-Deprecation warnings typically appear in test output or logs:
-```
-warning: deprecated feature X is used. Use Y instead.
-```
-
-**Reproducing warnings for debugging:**
-
-If you need to see all deprecation warnings to fix them systematically:
+**Quick start:**
 
 ```bash
 # Run tests with deprecation warnings enabled
 RUBYOPT="-W:deprecated" bundle exec rspec
 
-# Or for a specific file
-ruby -W:deprecated spec/models/user_spec.rb
+# Fail CI if deprecations found
+FAIL_ON_DEPRECATIONS=true bundle exec rspec
+
+# Save report for analysis
+DEPRECATION_WARNINGS_FILE=tmp/deprecations.txt bundle exec rspec
 ```
 
-**Fixing approach:**
-1. Locate the source file and line number from the warning message
-2. Replace deprecated syntax/API with the recommended alternative
-3. Run tests again to verify the warning is resolved
-4. Repeat for remaining warnings
+**For comprehensive deprecation tracking system including:**
+- Automatic warning detection during RSpec tests
+- Environment variable configuration (FAIL_ON_DEPRECATIONS, DEPRECATION_WARNINGS_FILE)
+- Common deprecation fixes for Ruby and Rails
+- CI/CD integration strategies
+- Upgrade preparation workflows
 
-**Best practices:**
-- Fix deprecation warnings as they appear during development
-- Don't modify project configuration files unless specifically required
-- Use temporary `-W:deprecated` flag only when needed for debugging
+**See [Deprecation Warning Tracking Guide](references/deprecation-tracking.md)**
 
 ## Code Style
 
@@ -309,6 +301,7 @@ Use Faraday for robust HTTP API integration. See [HTTP Client Guide](references/
 - [RSpec Best Practices](references/rspec-best-practices.md) - Comprehensive RSpec testing guidelines
 - [RSpec Composable Matchers](references/new-in-rspec-3-composable-matchers.md) - RSpec 3 composable matchers feature guide
 - [RSpec Features](references/rspec-features/) - Official RSpec feature documentation (versions 3.13 and 8.0)
+- [Deprecation Warning Tracking Guide](references/deprecation-tracking.md) - Systematic deprecation warning tracking, CI/CD integration, and upgrade strategies
 - [CurrentAttributes Guide](references/current-attributes.md) - Rails per-request global state management
 - [Input Normalization Guide](references/input-normalization.md) - Rails 7.1+ input sanitization
 - [Frozen String Literal Guide](references/frozen-string-literal.md) - Ruby memory optimization

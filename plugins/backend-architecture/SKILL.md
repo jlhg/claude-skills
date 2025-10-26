@@ -1,6 +1,6 @@
 ---
 name: Backend Architecture
-description: Backend system architecture design best practices covering Redis/Valkey architecture, configuration management, caching strategies, and session storage. Use when designing scalable backend systems, configuring Redis instance separation, managing environment variables, or when user mentions Redis, Valkey, architecture, configuration, cache, session, ActionCable, environment variables, secrets, settings, or ENV.
+description: Backend system architecture design best practices covering database design (UUIDv7/bigint primary keys), Redis/Valkey architecture, configuration management, caching strategies, and session storage. Use when designing scalable backend systems, choosing database ID strategies, configuring Redis instance separation, managing environment variables, or when user mentions database design, UUID, UUIDv7, primary keys, Redis, Valkey, architecture, configuration, cache, session, ActionCable, environment variables, secrets, settings, or ENV.
 ---
 
 # Backend Architecture
@@ -142,6 +142,51 @@ Rails built-in encrypted configuration management.
   - Not using Docker
   - Infrequent configuration changes
 
+## Database Design
+
+### Primary Key Strategy: UUIDv7 vs bigint
+
+Choose database primary key types based on security, performance, and scalability needs.
+
+**Default recommendation: UUIDv7**
+- ✅ Prevents business intelligence leakage (no sequential IDs)
+- ✅ Same performance as bigint (time-ordered, append-only B-tree)
+- ✅ Native PostgreSQL 18+ / MySQL 8.4+ support
+- ✅ Globally unique for distributed systems
+- ⚠️ Larger storage (16 bytes vs 8 bytes)
+
+**When to use bigint:**
+- Internal tables not exposed via API
+- Join tables
+- High-volume logging tables
+- Tables with extreme storage constraints
+
+**Security principle:**
+
+UUIDs prevent enumeration attacks but always implement proper authorization:
+
+```ruby
+# ✅ Correct: UUID + authorization
+def show
+  @order = current_user.orders.find(params[:id])
+end
+
+# ❌ Wrong: Relying only on UUID secrecy
+def show
+  @order = Order.find(params[:id])
+end
+```
+
+**For comprehensive coverage including:**
+- Business intelligence leakage examples and risks
+- Performance benchmarks (UUIDv7 vs UUIDv4 vs bigint vs ULID)
+- Framework-specific implementation (Rails, Django, Node.js)
+- Migration strategies for existing projects
+- Index optimization for UUID foreign keys
+- URL display format options
+
+**See [Database ID Strategy Guide](references/database-id-strategy.md)**
+
 ## Architecture Patterns
 
 ### Caching Strategies
@@ -237,6 +282,7 @@ Checklist when designing backend systems:
 
 ## Resources
 
+- [Database ID Strategy Guide](references/database-id-strategy.md) - Primary key design (UUIDv7 vs bigint) with security and performance considerations
 - [Redis Architecture Guide](references/redis-architecture.md) - Three-instance separation and configuration
 - [Configuration Guide](references/configuration.md) - ENV, Docker Secrets, and Settings management
 
