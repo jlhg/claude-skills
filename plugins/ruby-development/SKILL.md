@@ -1,6 +1,6 @@
 ---
-name: Ruby Development
-description: Provides Ruby and Ruby on Rails development conventions including RuboCop formatting, Ruby style guide, RSpec testing, deprecation warning tracking, Rails best practices, CurrentAttributes usage, input normalization, frozen string literals, and HTTP client (Faraday) integration. Use when developing Ruby or Rails applications, writing tests, formatting code, handling deprecation warnings, preparing for Ruby/Rails upgrades, optimizing performance, or when user mentions Ruby, Rails, RSpec, RuboCop, deprecation, Active Record, CurrentAttributes, normalizes, Faraday, or HTTP client.
+name: Developing Ruby Applications
+description: Ruby and Rails development best practices covering code style (RuboCop), testing (RSpec), deprecation tracking, and advanced features (CurrentAttributes, input normalization, frozen strings, HTTP clients). Use when writing Ruby/Rails code, running tests, handling deprecations, or when user mentions Ruby, Rails, RSpec, RuboCop, CurrentAttributes, Faraday, or HTTP client.
 ---
 
 # Ruby Development

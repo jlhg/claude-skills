@@ -1,5 +1,5 @@
 ---
-name: Deployment Practices
+name: Deploying Applications
 description: Deployment and DevOps best practices covering zero-downtime deployment, Cloudflare Tunnel configuration, WebSocket support, and database migration strategies. Use when deploying to production, designing CI/CD pipelines, configuring infrastructure, or when user mentions deployment, zero-downtime, Cloudflare Tunnel, WebSocket, ActionCable, database migration, Docker, Kubernetes, rolling update, blue-green, or canary.
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: Developing Claude Skills
-description: Provides guidelines and best practices for authoring effective Claude Skills. Use when creating new skills, refining existing skills, or learning about skill development patterns and conventions.
+description: Guidelines for authoring effective Claude Skills covering conciseness, progressive disclosure, and discoverable descriptions. Use when creating new skills, refining existing skills, debugging skill discovery issues, optimizing skill descriptions, or when user mentions skill development, SKILL.md, skill authoring, or frontmatter.
 ---
 
 # Skill Development

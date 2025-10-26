@@ -1,5 +1,5 @@
 ---
-name: Performance Optimization
+name: Optimizing Application Performance
 description: Web application performance optimization techniques covering memory management, jemalloc configuration, and memory leak detection. Use when optimizing high-traffic Rails applications, reducing memory usage, performance tuning, or when user mentions memory optimization, jemalloc, memory leak, Ruby, Rails, performance, profiling, derailed_benchmarks, or memory_profiler.
 ---
 

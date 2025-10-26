@@ -11,22 +11,14 @@
   "plugins": [
     {
       "name": "development-skills",
-      "description": "Development skills for Git conventions and language-specific best practices",
+      "description": "Development skills including Git conventions, language-specific best practices, backend architecture, deployment, performance optimization, and security",
       "source": "./",
       "strict": false,
       "skills": [
         "./plugins/development-workflow",
         "./plugins/git-conventions",
         "./plugins/python-development",
-        "./plugins/ruby-development"
-      ]
-    },
-    {
-      "name": "backend-skills",
-      "description": "Backend architecture, deployment, performance optimization, and security best practices",
-      "source": "./",
-      "strict": false,
-      "skills": [
+        "./plugins/ruby-development",
         "./plugins/backend-architecture",
         "./plugins/deployment-practices",
         "./plugins/performance-optimization",

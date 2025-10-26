@@ -1,6 +1,6 @@
 ---
-name: Backend Architecture
-description: Backend system architecture design best practices covering database design (UUIDv7/bigint primary keys), Redis/Valkey architecture, configuration management, caching strategies, and session storage. Use when designing scalable backend systems, choosing database ID strategies, configuring Redis instance separation, managing environment variables, or when user mentions database design, UUID, UUIDv7, primary keys, Redis, Valkey, architecture, configuration, cache, session, ActionCable, environment variables, secrets, settings, or ENV.
+name: Designing Backend Architecture
+description: Backend system architecture covering database design (UUIDv7/bigint IDs), Redis/Valkey setup, configuration management, and caching strategies. Use when designing scalable backends, configuring Redis instances, managing environment variables, or when user mentions UUID, Redis, Valkey, cache, session, ActionCable, ENV, or configuration.
 ---
 
 # Backend Architecture

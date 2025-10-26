@@ -1,5 +1,5 @@
 ---
-name: Web Application Security
+name: Securing Web Applications
 description: Web application security best practices covering API rate limiting, path traversal protection, and authentication architecture design. Use when implementing DDoS protection, securing sensitive paths, designing token management systems, or when user mentions Rack::Attack, Cloudflare WAF, authentication, rate limiting, token, Redis, PostgreSQL, security, API protection, or path traversal.
 ---
 
