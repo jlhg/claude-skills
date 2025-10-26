@@ -18,6 +18,8 @@ This document explains the recommended authentication architecture for this Rail
   - [High Security: Memory Storage](#high-security-memory-storage)
   - [OAuth 2.0 Integration](#oauth-20-integration)
   - [Frontend Security Checklist](#frontend-security-checklist)
+- [Advanced Frontend Topics](#advanced-frontend-topics)
+  - [Handling Concurrent Requests (Race Condition)](#handling-concurrent-requests-race-condition)
 
 ## Overview
 
@@ -1063,6 +1065,755 @@ async function apiRequest(url, options = {}) {
   return response;
 }
 ```
+
+## Advanced Frontend Topics
+
+### Handling Concurrent Requests (Race Condition)
+
+When a web page makes multiple API requests simultaneously and the access token has expired, you may encounter a **race condition** where multiple token refresh requests are triggered at the same time. This section explains the problem and provides comprehensive solutions.
+
+#### The Problem Scenario
+
+**Common situation:**
+```javascript
+// Page loads and makes multiple requests simultaneously
+Promise.all([
+  fetch('/api/users/profile'),    // Request 1
+  fetch('/api/notifications'),     // Request 2
+  fetch('/api/dashboard/stats'),   // Request 3
+]);
+
+// If access_token is expired, all three return 401
+// If each request tries to refresh, 3 refresh requests are sent! ⚠️
+```
+
+**Visual representation:**
+```
+Time →  Request 1    Request 2    Request 3
+        (profile)    (notifs)     (stats)
+           ↓            ↓            ↓
+        [401] ←─────[401] ←──────[401]
+           ↓            ↓            ↓
+     Refresh!      Refresh!      Refresh!   ❌ Race condition!
+           ↓            ↓            ↓
+    /auth/refresh /auth/refresh /auth/refresh
+```
+
+#### Impact of Race Condition
+
+1. ❌ **Multiple refresh requests**: Wastes bandwidth and server resources
+2. ❌ **Token confusion**: Multiple new access tokens generated, unclear which is valid
+3. ❌ **Backend load**: Unnecessary duplicate requests to PostgreSQL/Redis
+4. ❌ **Security concerns**: May trigger rate limiting or be flagged as attack
+5. ❌ **Unpredictable behavior**: Some requests may succeed while others fail
+
+#### Solution 1: Request Queue Management (Vanilla JavaScript)
+
+**Core concept**: Use a single shared promise for token refresh, so all concurrent requests wait for the same refresh operation.
+
+```javascript
+// API client with request queue management
+class ApiClient {
+  constructor() {
+    this.refreshPromise = null;  // Shared refresh promise
+  }
+
+  async refreshToken() {
+    // If refresh is already in progress, return the same promise
+    if (this.refreshPromise) {
+      console.log('Refresh already in progress, waiting...');
+      return this.refreshPromise;
+    }
+
+    // Create new refresh promise
+    this.refreshPromise = fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Refresh failed');
+        return response.json();
+      })
+      .finally(() => {
+        // Clear promise after completion, allowing next refresh
+        this.refreshPromise = null;
+      });
+
+    return this.refreshPromise;
+  }
+
+  async request(url, options = {}) {
+    let response = await fetch(url, {
+      ...options,
+      credentials: 'include'
+    });
+
+    // If 401, attempt refresh
+    if (response.status === 401) {
+      console.log('Token expired, refreshing...');
+
+      try {
+        // Multiple requests share the same refreshPromise
+        await this.refreshToken();
+
+        // Refresh successful, retry original request
+        console.log('Refresh successful, retrying request...');
+        response = await fetch(url, {
+          ...options,
+          credentials: 'include'
+        });
+      } catch (error) {
+        // Refresh failed, redirect to login
+        console.error('Refresh failed:', error);
+        window.location.href = '/login';
+        throw error;
+      }
+    }
+
+    return response;
+  }
+}
+
+// Create singleton instance
+const apiClient = new ApiClient();
+
+// Usage example
+async function loadDashboard() {
+  try {
+    // All three requests wait for the same refresh if token expired
+    const [profile, notifs, stats] = await Promise.all([
+      apiClient.request('/api/users/profile'),      // First detects 401, triggers refresh
+      apiClient.request('/api/notifications'),       // Waits for same refresh
+      apiClient.request('/api/dashboard/stats'),     // Waits for same refresh
+    ]);
+
+    const profileData = await profile.json();
+    const notifsData = await notifs.json();
+    const statsData = await stats.json();
+
+    console.log('All data loaded:', { profileData, notifsData, statsData });
+  } catch (error) {
+    console.error('Failed to load dashboard:', error);
+  }
+}
+```
+
+**How it works:**
+```
+Time →  Request 1     Request 2     Request 3
+           ↓             ↓             ↓
+        [401] ←──────[401] ←───────[401]
+           ↓             ↓             ↓
+      refreshToken() ←──┴─────────────┘
+           ↓         (wait for same promise)
+    /auth/refresh  ✅ Only ONE refresh request
+           ↓
+     [Success]
+           ↓
+      ┌────┴────┬─────────┐
+      ↓         ↓         ↓
+   Retry 1   Retry 2   Retry 3
+```
+
+#### Solution 2: Axios Interceptor
+
+If using axios, you can implement this pattern more elegantly using interceptors:
+
+```javascript
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/api',
+  withCredentials: true  // Send cookies
+});
+
+let isRefreshing = false;
+let failedQueue = [];
+
+// Process queued requests after refresh
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+// Response interceptor
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
+
+    // If 401 and not yet retried
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Refresh already in progress, add to queue
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => {
+            // After refresh completes, retry request
+            return api(originalRequest);
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Execute refresh
+        await axios.post('/api/auth/refresh', {}, {
+          withCredentials: true
+        });
+
+        // Refresh successful, process queue
+        processQueue(null);
+
+        // Retry original request
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed
+        processQueue(refreshError);
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// Usage example - transparent to the application code
+async function loadDashboard() {
+  try {
+    const [profile, notifs, stats] = await Promise.all([
+      api.get('/users/profile'),
+      api.get('/notifications'),
+      api.get('/dashboard/stats'),
+    ]);
+
+    console.log('Profile:', profile.data);
+    console.log('Notifications:', notifs.data);
+    console.log('Stats:', stats.data);
+  } catch (error) {
+    console.error('Failed to load dashboard:', error);
+  }
+}
+```
+
+**Benefits of axios interceptor approach:**
+- ✅ Transparent to application code (no need to change fetch calls)
+- ✅ Centralized error handling
+- ✅ Automatic request queuing
+- ✅ Works with all axios methods (get, post, put, delete)
+
+#### Solution 3: Proactive Token Refresh
+
+Instead of waiting for 401 errors, proactively refresh tokens before they expire:
+
+```javascript
+class TokenManager {
+  constructor() {
+    this.tokenExpiryTime = null;
+    this.refreshTimer = null;
+    this.startAutoRefresh();
+  }
+
+  startAutoRefresh() {
+    // Check every minute
+    this.refreshTimer = setInterval(() => {
+      if (!this.tokenExpiryTime) return;
+
+      const now = Date.now();
+      const timeUntilExpiry = this.tokenExpiryTime - now;
+
+      // Refresh 5 minutes before expiry
+      if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
+        console.log('Proactively refreshing token...');
+        this.refreshToken();
+      }
+    }, 60 * 1000);
+  }
+
+  async refreshToken() {
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Update expiry time (if backend returns it)
+        if (data.expires_in) {
+          this.tokenExpiryTime = Date.now() + (data.expires_in * 1000);
+        }
+
+        console.log('Token proactively refreshed');
+      }
+    } catch (error) {
+      console.error('Proactive refresh failed:', error);
+    }
+  }
+
+  setTokenExpiry(expiresIn) {
+    this.tokenExpiryTime = Date.now() + (expiresIn * 1000);
+  }
+
+  stopAutoRefresh() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
+  }
+}
+
+// Initialize on app startup
+const tokenManager = new TokenManager();
+
+// After login, set token expiry
+async function login(email, password) {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email, password })
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+
+    // If backend returns expiry time, set it
+    if (data.expires_in) {
+      tokenManager.setTokenExpiry(data.expires_in);
+    }
+  }
+}
+
+// Clean up on logout
+async function logout() {
+  tokenManager.stopAutoRefresh();
+  await fetch('/api/auth/logout', {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+}
+```
+
+**Benefits:**
+- ✅ Reduces race condition probability (token rarely expires during requests)
+- ✅ Better user experience (no mid-request delays)
+- ✅ Predictable refresh timing
+
+**Combine with Solution 1 or 2** for best results:
+- Proactive refresh prevents most race conditions
+- Request queue handles edge cases where token expires anyway
+
+#### Backend Support: Refresh Token Rotation
+
+To enhance security, implement **refresh token rotation** on the backend. This pattern issues a new refresh token with each refresh and immediately revokes the old one.
+
+```ruby
+# app/controllers/api/auth_controller.rb
+class Api::AuthController < ApplicationController
+  def refresh
+    refresh_token = cookies.encrypted[:refresh_token]
+
+    # Verify refresh token
+    token_record = RefreshToken.find_by(
+      token_digest: Digest::SHA256.hexdigest(refresh_token)
+    )
+
+    if token_record&.valid?
+      user = token_record.user
+
+      # 1. Generate new access token
+      new_access_token = generate_access_token(user)
+
+      # 2. Generate new refresh token (rotation)
+      new_refresh_token = generate_refresh_token(user)
+
+      # 3. Immediately revoke old refresh token
+      token_record.update!(revoked_at: Time.current)
+
+      # 4. Set new cookies
+      cookies.encrypted[:access_token] = {
+        value: new_access_token,
+        httponly: true,
+        secure: Rails.env.production?,
+        same_site: :strict,
+        expires: 30.minutes.from_now
+      }
+
+      cookies.encrypted[:refresh_token] = {
+        value: new_refresh_token,
+        httponly: true,
+        secure: Rails.env.production?,
+        same_site: :strict,
+        expires: 7.days.from_now
+      }
+
+      # 5. Return expiry info for proactive refresh
+      render json: {
+        message: 'Token refreshed',
+        expires_in: 30.minutes.to_i  # Seconds until expiry
+      }
+    else
+      # Detect reuse of revoked token (possible attack)
+      if token_record&.revoked?
+        # Revoke all tokens for this user
+        token_record.user.refresh_tokens.active.each do |t|
+          t.update!(revoked_at: Time.current)
+        end
+
+        Rails.logger.warn(
+          "Possible token theft detected for user #{token_record.user_id}"
+        )
+      end
+
+      render json: { error: 'Invalid refresh token' }, status: :unauthorized
+    end
+  end
+
+  private
+
+  def generate_access_token(user)
+    token = SecureRandom.urlsafe_base64(32)
+
+    # Store in PostgreSQL
+    AccessToken.create!(
+      user: user,
+      token_digest: Digest::SHA256.hexdigest(token),
+      expires_at: 30.minutes.from_now
+    )
+
+    # Cache in Redis
+    REDIS_SESSION.with do |redis|
+      redis.setex("token:#{token}", 30.minutes.to_i, user.id)
+    end
+
+    token
+  end
+
+  def generate_refresh_token(user)
+    token = SecureRandom.urlsafe_base64(32)
+
+    RefreshToken.create!(
+      user: user,
+      token_digest: Digest::SHA256.hexdigest(token),
+      expires_at: 7.days.from_now
+    )
+
+    token
+  end
+end
+```
+
+**Security benefits:**
+- ✅ Stolen refresh token is invalidated after first use
+- ✅ Detects token replay attacks (reuse of revoked token)
+- ✅ Can revoke all sessions if attack detected
+- ✅ Audit trail in PostgreSQL (when revoked, by whom)
+
+#### React Hook Example
+
+Complete implementation as a React hook:
+
+```javascript
+// hooks/useApi.js
+import { useCallback, useRef } from 'react';
+
+export function useApi() {
+  const refreshPromiseRef = useRef(null);
+
+  const refreshToken = useCallback(async () => {
+    // Return existing promise if refresh in progress
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
+
+    refreshPromiseRef.current = fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Refresh failed');
+        return response.json();
+      })
+      .finally(() => {
+        refreshPromiseRef.current = null;
+      });
+
+    return refreshPromiseRef.current;
+  }, []);
+
+  const apiRequest = useCallback(async (url, options = {}) => {
+    let response = await fetch(url, {
+      ...options,
+      credentials: 'include'
+    });
+
+    if (response.status === 401) {
+      try {
+        await refreshToken();
+
+        // Retry original request
+        response = await fetch(url, {
+          ...options,
+          credentials: 'include'
+        });
+      } catch (error) {
+        window.location.href = '/login';
+        throw error;
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
+  }, [refreshToken]);
+
+  return { apiRequest };
+}
+
+// Usage in components
+function Dashboard() {
+  const { apiRequest } = useApi();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        // All requests handled by the same hook instance
+        // Only one refresh will occur if token expired
+        const [profileRes, notifsRes, statsRes] = await Promise.all([
+          apiRequest('/api/users/profile'),
+          apiRequest('/api/notifications'),
+          apiRequest('/api/dashboard/stats'),
+        ]);
+
+        const [profile, notifs, stats] = await Promise.all([
+          profileRes.json(),
+          notifsRes.json(),
+          statsRes.json(),
+        ]);
+
+        setData({ profile, notifs, stats });
+      } catch (error) {
+        console.error('Failed to load dashboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [apiRequest]);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <Profile data={data.profile} />
+      <Notifications data={data.notifs} />
+      <Stats data={data.stats} />
+    </div>
+  );
+}
+```
+
+**Hook benefits:**
+- ✅ Reusable across components
+- ✅ Automatic race condition prevention
+- ✅ Clean, declarative API
+- ✅ TypeScript-friendly
+
+#### Testing and Verification
+
+**Test scenario 1: Simulate race condition**
+
+```javascript
+// Test script (run in browser console)
+async function testRaceCondition() {
+  console.log('Starting race condition test...');
+
+  // Send 10 concurrent requests
+  const requests = Array(10).fill(null).map((_, i) =>
+    apiClient.request('/api/test-endpoint')
+      .then(() => console.log(`Request ${i + 1} completed`))
+      .catch(error => console.error(`Request ${i + 1} failed:`, error))
+  );
+
+  await Promise.all(requests);
+  console.log('Test completed');
+}
+
+// Expected result: Only ONE refresh request in network tab
+testRaceCondition();
+```
+
+**Test scenario 2: Verify refresh count**
+
+```javascript
+// Add instrumentation to ApiClient
+class ApiClient {
+  constructor() {
+    this.refreshPromise = null;
+    this.refreshCount = 0;  // Track refresh calls
+  }
+
+  async refreshToken() {
+    if (this.refreshPromise) {
+      console.log(`Reusing existing refresh (count: ${this.refreshCount})`);
+      return this.refreshPromise;
+    }
+
+    this.refreshCount++;
+    console.log(`Starting refresh #${this.refreshCount}`);
+
+    this.refreshPromise = fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Refresh failed');
+        return response.json();
+      })
+      .finally(() => {
+        this.refreshPromise = null;
+      });
+
+    return this.refreshPromise;
+  }
+
+  // ... rest of implementation
+}
+
+// After testing, check:
+console.log(`Total refreshes: ${apiClient.refreshCount}`);
+// Should be 1, not 10
+```
+
+**Manual verification checklist:**
+
+- [ ] Open browser DevTools → Network tab
+- [ ] Clear existing tokens (to force refresh)
+- [ ] Trigger multiple concurrent requests
+- [ ] Verify only **one** `/api/auth/refresh` request appears
+- [ ] Verify all original requests complete successfully after refresh
+- [ ] Check console logs for "Reusing existing refresh" messages
+
+#### Best Practices Summary
+
+**Recommended implementation (priority order):**
+
+1. ✅ **Request queue management** (Solution 1 or 2)
+   - Use shared refresh promise
+   - Prevents race conditions at the source
+   - Required for production
+
+2. ✅ **Proactive token refresh** (Solution 3)
+   - As supplementary measure
+   - Reduces race condition probability
+   - Improves user experience
+
+3. ✅ **Backend refresh token rotation**
+   - Enhances security
+   - Detects token theft
+   - Recommended for sensitive applications
+
+**Implementation checklist:**
+
+**Frontend:**
+- [ ] Implement shared refresh promise (vanilla JS or axios interceptor)
+- [ ] Use centralized API client (not direct fetch calls)
+- [ ] Add proactive refresh 5 minutes before expiry (optional but recommended)
+- [ ] Handle refresh failure by redirecting to login
+- [ ] Add instrumentation for testing (refresh count tracking)
+
+**Backend:**
+- [ ] Return `expires_in` in refresh response (for proactive refresh)
+- [ ] Implement refresh token rotation (optional but recommended)
+- [ ] Log suspicious activity (revoked token reuse)
+- [ ] Consider revoking all sessions on detected attack
+
+**Testing:**
+- [ ] Test: 10 concurrent requests → only 1 refresh
+- [ ] Test: Refresh failure → redirect to login
+- [ ] Test: Proactive refresh → triggers before expiry
+- [ ] Test: Network failure during refresh → graceful handling
+- [ ] Load test: High concurrency (100+ requests) → no duplicate refreshes
+
+**Common mistakes to avoid:**
+
+❌ **Don't do this:**
+```javascript
+// Each component manages its own refresh
+function ComponentA() {
+  const refresh = () => fetch('/api/auth/refresh', ...);
+  // Race condition with ComponentB!
+}
+
+function ComponentB() {
+  const refresh = () => fetch('/api/auth/refresh', ...);
+  // Race condition with ComponentA!
+}
+
+// Not checking if refresh is in progress
+async function badRequest(url) {
+  const response = await fetch(url);
+  if (response.status === 401) {
+    await fetch('/api/auth/refresh', ...);  // Always creates new refresh!
+  }
+}
+```
+
+✅ **Do this instead:**
+```javascript
+// Single global API client
+const apiClient = new ApiClient();
+
+function ComponentA() {
+  return useApi();  // Shares same instance
+}
+
+function ComponentB() {
+  return useApi();  // Shares same instance
+}
+
+// All requests go through the same client
+apiClient.request('/api/users/profile');
+apiClient.request('/api/notifications');
+// Only one refresh if token expired
+```
+
+**Performance considerations:**
+
+- **Request overhead**: Shared refresh adds ~0-2ms latency (negligible)
+- **Memory usage**: Single promise stored in memory (minimal)
+- **Backend load**: Reduced by 90%+ (one refresh instead of many)
+- **User experience**: Improved (faster, more reliable)
+
+**Security considerations:**
+
+- Always use HTTPS in production
+- Never store tokens in localStorage (use httpOnly cookies)
+- Implement refresh token rotation for sensitive applications
+- Log and alert on suspicious activity (revoked token reuse)
+- Consider IP-based rate limiting on refresh endpoint
 
 ## Summary
 

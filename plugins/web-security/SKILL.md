@@ -96,6 +96,7 @@ Secure and scalable authentication system design. See [Authentication Guide](ref
   - OAuth 2.0 integration patterns
   - CORS configuration for cookie-based auth
   - Frontend security checklist
+  - Handling concurrent requests (race condition prevention, request queue management)
 
 - **Security Best Practices**
   - Token entropy (256-bit)
