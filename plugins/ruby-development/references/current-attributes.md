@@ -5,21 +5,21 @@ Rails built-in `ActiveSupport::CurrentAttributes` provides thread-safe per-reque
 ## Overview
 
 **CurrentAttributes** is a feature introduced in Rails 5.2+ for storing "current request" global state:
-- ✅ **Thread-safe**: Each request has its own variable space
-- ✅ **Auto cleanup**: Automatically resets after request ends
-- ✅ **Type-safe**: Uses attributes instead of hash keys
-- ✅ **Rails native**: No additional gems needed
+- **Thread-safe**: Each request has its own variable space
+- **Auto cleanup**: Automatically resets after request ends
+- **Type-safe**: Uses attributes instead of hash keys
+- **Rails native**: No additional gems needed
 
 ## Why Not Use request_store?
 
 After Rails 5.2+, the `request_store` gem has been replaced by CurrentAttributes:
 
 ```ruby
-# ❌ Old way (request_store gem)
+# Old way (request_store gem)
 RequestStore.store[:current_user] = user
 user = RequestStore.store[:current_user]
 
-# ✅ New way (Rails built-in)
+# New way (Rails built-in)
 Current.user = user
 user = Current.user
 ```
@@ -273,7 +273,7 @@ end
 
 ## Best Practices
 
-### ✅ Appropriate Use Cases
+### Appropriate Use Cases
 
 1. **Top-level global variables**
    - `current_user` - Currently logged in user
@@ -287,11 +287,11 @@ end
 3. **Audit Trail / Logging**
    - Automatically record "who, when, from where" for operations
 
-### ⚠️ Usage to Avoid
+### Note: Usage to Avoid
 
 1. **Overuse leading to hidden dependencies**
    ```ruby
-   # ❌ Bad: Hidden dependency, hard to test
+   # Bad: Hidden dependency, hard to test
    class OrderService
      def calculate_total
        discount = Current.promotion.discount  # Non-obvious dependency
@@ -299,7 +299,7 @@ end
      end
    end
 
-   # ✅ Good: Explicit parameter passing
+   # Good: Explicit parameter passing
    class OrderService
      def calculate_total(promotion:)
        discount = promotion.discount
@@ -310,12 +310,12 @@ end
 
 2. **Storing frequently changing state**
    ```ruby
-   # ❌ Bad: Modifying multiple times during request
+   # Bad: Modifying multiple times during request
    Current.step = "processing"
    # ... do something
    Current.step = "completed"  # Easily confusing
 
-   # ✅ Good: Use local variables or state machine
+   # Good: Use local variables or state machine
    step = "processing"
    # ... do something
    step = "completed"
@@ -323,14 +323,14 @@ end
 
 3. **Using in Background Jobs**
    ```ruby
-   # ❌ Bad: Background job has no request context
+   # Bad: Background job has no request context
    class ProcessOrderJob < ApplicationJob
      def perform(order_id)
        Current.user  # → nil (not in request)
      end
    end
 
-   # ✅ Good: Explicitly pass required data
+   # Good: Explicitly pass required data
    class ProcessOrderJob < ApplicationJob
      def perform(order_id, user_id)
        user = User.find(user_id)
@@ -437,15 +437,15 @@ end
 
 CurrentAttributes uses thread-local storage with minimal performance impact:
 
-- ✅ **Read speed**: ~0.001ms (comparable to local variables)
-- ✅ **Memory**: Per-thread independent storage, auto-cleanup
-- ⚠️ **Avoid**: Storing large objects (like complete associated data)
+- **Read speed**: ~0.001ms (comparable to local variables)
+- **Memory**: Per-thread independent storage, auto-cleanup
+- Note: **Avoid**: Storing large objects (like complete associated data)
 
 ```ruby
-# ❌ Bad: Storing large objects
+# Bad: Storing large objects
 Current.user_with_posts = User.includes(:posts).find(1)
 
-# ✅ Good: Only store ID, query when needed
+# Good: Only store ID, query when needed
 Current.user = User.find(1)
 # When needed: Current.user.posts
 ```
@@ -453,14 +453,14 @@ Current.user = User.find(1)
 ## Summary
 
 **When to Use CurrentAttributes:**
-- ✅ Need to share top-level context across multiple layers
-- ✅ Avoid passing same parameters in every method signature
-- ✅ Automated audit logging
+- Need to share top-level context across multiple layers
+- Avoid passing same parameters in every method signature
+- Automated audit logging
 
 **When to Avoid:**
-- ❌ Data that can be passed as parameters
-- ❌ Frequently changing temporary state
-- ❌ Background jobs (no request context)
+- Data that can be passed as parameters
+- Frequently changing temporary state
+- Background jobs (no request context)
 
 **Remember DHH's Advice:**
 > "CurrentAttributes should be used sparingly, for a few, top-level globals like account, user, and request details."

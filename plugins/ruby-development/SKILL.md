@@ -102,7 +102,7 @@ Before implementing new logic, check for existing helper methods in the codebase
 
 **Best Practice:**
 ```ruby
-# ❌ Avoid duplicating logic
+# Avoid duplicating logic
 def create
   if model.save
     # ...
@@ -111,7 +111,7 @@ def create
   end
 end
 
-# ✅ Use existing helpers if available
+# Use existing helpers if available
 def create
   if model.save
     # ...
@@ -265,7 +265,7 @@ Enable frozen string literals to optimize memory usage. See [Frozen String Liter
 - Performance benefits
 - Migration strategies
 
-**⚠️ Important: Check Project Configuration First**
+**Note: Important: Check Project Configuration First**
 
 Before adding `# frozen_string_literal: true` to files, check if the project has **global frozen string literal enabled**:
 
@@ -276,13 +276,13 @@ Before adding `# frozen_string_literal: true` to files, check if the project has
 4. Look for documentation like `docs/FROZEN_STRING_LITERAL.md`
 
 **If globally enabled:**
-- ❌ **DO NOT** add `# frozen_string_literal: true` magic comments
-- ✅ **DO** remove auto-generated frozen string literal comments from Rails generators
-- ✅ Magic comments are redundant and add unnecessary visual noise
+- **DO NOT** add `# frozen_string_literal: true` magic comments
+- **DO** remove auto-generated frozen string literal comments from Rails generators
+- Magic comments are redundant and add unnecessary visual noise
 
 **If NOT globally enabled:**
-- ✅ Add `# frozen_string_literal: true` to new Ruby files
-- ✅ Follow standard Ruby/Rails conventions
+- Add `# frozen_string_literal: true` to new Ruby files
+- Follow standard Ruby/Rails conventions
 
 **Rationale:**
 When `RUBYOPT="--enable-frozen-string-literal"` is set globally (via Docker/environment), all Ruby files automatically have frozen strings enabled. Adding per-file magic comments is redundant and violates DRY principle.

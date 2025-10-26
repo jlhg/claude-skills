@@ -63,41 +63,41 @@ Cloudflare Tunnel provides secure remote access to your Rails application withou
 
 ### Advantages
 
-✅ **Security:**
+Yes **Security:**
 - No exposed ports (no SSH, no open HTTP/HTTPS)
 - Cloudflare handles SSL/TLS certificates
 - Built-in DDoS and bot protection
 - Zero Trust access policies (optional)
 
-✅ **Simplicity:**
+Yes **Simplicity:**
 - No need for reverse proxy (nginx, Caddy)
 - No Let's Encrypt certificate management
 - Works behind NAT/firewall without configuration
 - Single container deployment
 
-✅ **Performance:**
+Yes **Performance:**
 - Cloudflare's global CDN
 - Automatic static asset caching (if enabled)
 - HTTP/2 and HTTP/3 support
 - WebSocket compression
 
-✅ **Cost:**
+Yes **Cost:**
 - Free tier available
 - No additional infrastructure needed
 
 ### Limitations
 
-⚠️ **WebSocket Timeout:**
+Note: **WebSocket Timeout:**
 - **Free plan**: 100 seconds
 - **Pro/Business**: 600 seconds (10 minutes)
 - **Enterprise**: Unlimited
 - **Solution**: ActionCable has built-in auto-reconnect
 
-⚠️ **Concurrency:**
+Note: **Concurrency:**
 - Single cloudflared instance: ~1,000 concurrent WebSocket connections
 - **Solution**: Run multiple replicas (same tunnel)
 
-⚠️ **Latency:**
+Note: **Latency:**
 - Adds ~20-50ms compared to direct connection
 - **Acceptable** for most API and WebSocket use cases
 
@@ -389,7 +389,7 @@ curl https://api.yourdomain.com/up
 const ws = new WebSocket('wss://api.yourdomain.com/cable');
 
 ws.onopen = () => {
-  console.log('✅ WebSocket connected');
+  console.log('Yes WebSocket connected');
 
   // Subscribe to a channel
   ws.send(JSON.stringify({
@@ -403,7 +403,7 @@ ws.onmessage = (event) => {
 };
 
 ws.onerror = (error) => {
-  console.error('❌ WebSocket error:', error);
+  console.error('No WebSocket error:', error);
 };
 
 ws.onclose = (event) => {
@@ -413,7 +413,7 @@ ws.onclose = (event) => {
 
 **Expected output:**
 ```
-✅ WebSocket connected
+Yes WebSocket connected
 Received: {"type":"welcome"}
 Received: {"type":"ping","message":1234567890}
 Received: {"type":"confirm_subscription","identifier":"..."}
@@ -428,7 +428,7 @@ const cable = ActionCable.createConsumer('wss://api.yourdomain.com/cable');
 
 const subscription = cable.subscriptions.create('NotificationsChannel', {
   connected() {
-    console.log('✅ ActionCable connected');
+    console.log('Yes ActionCable connected');
   },
   received(data) {
     console.log('📨 Received:', data);
@@ -627,25 +627,25 @@ time curl -so /dev/null https://api.yourdomain.com/up
 
 ### 1. Credential Management
 
-✅ **DO:**
+Yes **DO:**
 - Store credentials in `.secrets/cf_tunnel_token` (gitignored)
 - Use proper file permissions (640)
 - Rotate tunnel credentials regularly
 
-❌ **DON'T:**
+No **DON'T:**
 - Commit credentials to git
 - Share credentials via email/chat
 - Use world-readable permissions (644, 666, 777)
 
 ### 2. Origin Validation
 
-✅ **DO:**
+Yes **DO:**
 - Set specific `ACTION_CABLE_ALLOWED_ORIGINS`
   ```bash
   ACTION_CABLE_ALLOWED_ORIGINS=https://app.yourdomain.com
   ```
 
-❌ **DON'T:**
+No **DON'T:**
 - Use `*` in production
   ```bash
   ACTION_CABLE_ALLOWED_ORIGINS=*  # Only for development!
@@ -900,7 +900,7 @@ spec:
 
 **Cloudflare Tunnel with ActionCable:**
 
-✅ **Setup checklist:**
+Yes **Setup checklist:**
 1. Create tunnel in Cloudflare Zero Trust
 2. Save credentials JSON to `.secrets/cf_tunnel_token`
 3. Configure `cloudflared-config.yaml` with tunnel ID
@@ -909,13 +909,13 @@ spec:
 6. Set `ACTION_CABLE_ALLOWED_ORIGINS` in Rails
 7. Start with `docker compose --profile cloudflare up -d`
 
-✅ **WebSocket best practices:**
+Yes **WebSocket best practices:**
 - Use `http2Origin: false` for `/cable` route
 - Set `keepAliveTimeout: 90s` for long connections
 - Frontend auto-reconnect (built into ActionCable.js)
 - Monitor connection health
 
-✅ **Production ready:**
+Yes **Production ready:**
 - Secure credential storage
 - Proper origin validation
 - Rate limiting (Cloudflare + Rack::Attack)

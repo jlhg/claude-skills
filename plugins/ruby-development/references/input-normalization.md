@@ -31,16 +31,16 @@ params = {
 ```
 
 **Consequences of not handling this:**
-- ❌ Search failures: `User.find_by(email: "john@example.com")` won't find `" john@example.com "`
-- ❌ Duplicate data: `"John"` and `" John "` are treated as different values
-- ❌ Validation errors: `validates :username, uniqueness: true` can't prevent `"user"` and `" user "`
-- ❌ Display issues: Extra whitespace appears in the UI
+- Search failures: `User.find_by(email: "john@example.com")` won't find `" john@example.com "`
+- Duplicate data: `"John"` and `" John "` are treated as different values
+- Validation errors: `validates :username, uniqueness: true` can't prevent `"user"` and `" user "`
+- Display issues: Extra whitespace appears in the UI
 
 **Benefits of normalization:**
-- ✅ Data consistency: Store in unified format
-- ✅ Query accuracy: Find data even when users input whitespace
-- ✅ Prevent duplicates: Uniqueness validation works correctly
-- ✅ Better UX: Clean, tidy display
+- Data consistency: Store in unified format
+- Query accuracy: Find data even when users input whitespace
+- Prevent duplicates: Uniqueness validation works correctly
+- Better UX: Clean, tidy display
 
 ## Why Input Normalization is Needed
 
@@ -70,17 +70,17 @@ User searches: " iPhone 15 " (with leading/trailing whitespace)
 
 ### Which Layer Should Handle This?
 
-**❌ Frontend handling is not enough**:
+**No Frontend handling is not enough**:
 - Can be bypassed (direct API calls)
 - Different frontends (web, mobile, CLI) need duplicate implementations
 - Cannot handle existing dirty data
 
-**✅ Backend handling (Model layer)**:
+**Yes Backend handling (Model layer)**:
 - Single source of truth
 - All data sources are normalized
 - Executes before validation, ensuring consistency
 
-**✅ Controller layer handling for search parameters**:
+**Yes Controller layer handling for search parameters**:
 - Search/filter scenarios need immediate handling
 - No need to persist, only used for queries
 
@@ -115,13 +115,13 @@ end
 class User < ApplicationRecord
   # Default: nil values are not processed
   normalizes :title, with: -> title { title.strip }
-  # User.create(title: nil) → title = nil ✅
+  # User.create(title: nil) → title = nil
 
   # apply_to_nil: true → process nil values too
   normalizes :title,
     with: -> title { title&.strip || 'Untitled' },
     apply_to_nil: true
-  # User.create(title: nil) → title = 'Untitled' ✅
+  # User.create(title: nil) → title = 'Untitled'
 end
 ```
 
@@ -135,7 +135,7 @@ user = User.create!(email: " JOHN@EXAMPLE.COM ")
 # Queries automatically normalize
 User.find_by(email: "  JOHN@EXAMPLE.COM  ")
 # → Automatically converts to: "john@example.com"
-# → User found ✅
+# → User found
 
 # No need to manually handle query parameters!
 ```
@@ -157,7 +157,7 @@ end
 
 #### Advantages and Disadvantages
 
-**✅ Advantages:**
+**Yes Advantages:**
 - Rails official support (Rails 7.1+)
 - **Automatically applies to finder queries** (biggest advantage)
 - Executes before validation
@@ -165,7 +165,7 @@ end
 - Supports complex normalization logic
 - Composable transformations
 
-**❌ Disadvantages:**
+**No Disadvantages:**
 - Rails 7.1+ only (This template uses Rails 8, so it's available)
 
 ---
@@ -261,13 +261,13 @@ end
 
 #### Advantages and Disadvantages
 
-**✅ Advantages:**
+**Yes Advantages:**
 - Supports all Rails versions
 - Full control over normalization logic
 - Can be customized for specific fields
 - Can add complex conditional logic
 
-**❌ Disadvantages:**
+**No Disadvantages:**
 - Need to manually maintain field list
 - **Does not automatically apply to finder queries**
 - Easy to forget to add new fields
@@ -391,13 +391,13 @@ end
 
 #### Advantages and Disadvantages
 
-**✅ Advantages:**
+**Yes Advantages:**
 - Suitable for search/filter scenarios
 - Does not affect database storage logic
 - Can be combined with `compact_blank` to remove empty values
 - Processes immediately, independent of Model
 
-**❌ Disadvantages:**
+**No Disadvantages:**
 - **Not suitable for data storage scenarios** (should be handled in Model)
 - Need to replicate implementation in each controller (unless using concern)
 - Queries still need manual handling (unlike normalizes auto)
@@ -482,13 +482,13 @@ user.email  # => "john@example.com"
 
 #### Advantages and Disadvantages
 
-**✅ Advantages:**
+**Yes Advantages:**
 - Quick setup, less code
 - Handles edge cases (nil, empty strings)
 - Supports multiple normalization modes (collapse, squish, downcase)
 - Battle-tested in production
 
-**❌ Disadvantages:**
+**No Disadvantages:**
 - Adds dependency (another gem)
 - Implicit behavior (new developers may not be aware)
 - Not suitable for complex normalization logic
@@ -498,10 +498,10 @@ user.email  # => "john@example.com"
 
 ## Fields That Should Not Be Normalized
 
-### ❌ Password-Related Fields
+### Password-Related Fields
 
 ```ruby
-# ❌ Don't strip passwords
+# Don't strip passwords
 # Leading/trailing whitespace may be part of the password
 class User < ApplicationRecord
   normalizes :email, with: -> v { v.strip.downcase }
@@ -516,25 +516,25 @@ end
 - Stripping leads to login failures
 - Security standards don't recommend modifying user-inputted passwords
 
-### ❌ JSON/YAML Fields
+### JSON/YAML Fields
 
 ```ruby
 class Setting < ApplicationRecord
-  # ❌ Don't normalize JSON/YAML fields
+  # Don't normalize JSON/YAML fields
   # normalizes :config, with: -> v { v.strip }  # Will break format
 
-  # ✅ JSON fields don't need normalization
+  # JSON fields don't need normalization
   # Rails automatically handles JSON serialization/deserialization
 end
 ```
 
-### ❌ Free-Text Fields (Depends on Requirements)
+### Free-Text Fields (Depends on Requirements)
 
 ```ruby
 class Post < ApplicationRecord
-  normalizes :title, with: -> v { v.strip }  # ✅ Titles should be stripped
+  normalizes :title, with: -> v { v.strip }  # Titles should be stripped
 
-  # ❌ Don't strip content (may break formatting)
+  # Don't strip content (may break formatting)
   # normalizes :content, with: -> v { v.strip }
   # normalizes :description, with: -> v { v.strip }
 
@@ -544,13 +544,13 @@ end
 
 **Exception:** If content is plain text and doesn't require formatting preservation, consider stripping.
 
-### ❌ Code/Markdown Fields
+### Code/Markdown Fields
 
 ```ruby
 class CodeSnippet < ApplicationRecord
-  normalizes :title, with: -> v { v.strip }  # ✅
+  normalizes :title, with: -> v { v.strip }
 
-  # ❌ Don't strip code
+  # Don't strip code
   # normalizes :code, with: -> v { v.strip }
 
   # Indentation at the beginning of code is meaningful
@@ -558,20 +558,20 @@ class CodeSnippet < ApplicationRecord
 end
 ```
 
-### ✅ Fields That Should Be Normalized
+### Fields That Should Be Normalized
 
 ```ruby
 class User < ApplicationRecord
-  # ✅ Most input should be normalized
+  # Most input should be normalized
   normalizes :name, :first_name, :last_name, with: -> v { v.strip }
   normalizes :email, with: -> v { v.strip.downcase }
   normalizes :username, with: -> v { v.strip.downcase }
   normalizes :phone, with: -> v { v.gsub(/\D/, '') }  # Remove non-numeric
 
-  # ✅ Address
+  # Address
   normalizes :address, :city, :country, with: -> v { v.strip }
 
-  # ✅ Title-type fields
+  # Title-type fields
   normalizes :title, :subject, :company_name, with: -> v { v.strip }
 end
 ```
@@ -602,7 +602,7 @@ user = User.create(email: "  JOHN@EXAMPLE.COM  ")
 user.email  # => "john@example.com"
 
 # Queries automatically normalize
-User.find_by(email: "  JOHN@EXAMPLE.COM  ")  # ✅ Found
+User.find_by(email: "  JOHN@EXAMPLE.COM  ")  # Found
 ```
 
 ### Scenario 2: Username
@@ -893,9 +893,9 @@ end
 ### normalizes Performance
 
 **Rails 7.1+ normalizes has excellent performance:**
-- ✅ Only executes when attributes change (not on every read)
-- ✅ Executes before validation (once)
-- ✅ Does not affect read performance
+- Only executes when attributes change (not on every read)
+- Executes before validation (once)
+- Does not affect read performance
 
 **Benchmark:**
 ```ruby
@@ -930,24 +930,24 @@ User.find_by(email: '  JOHN@EXAMPLE.COM  ')
 ```
 
 **Performance impact:**
-- ✅ Minimal (< 0.1ms)
-- ✅ Occurs at Ruby layer, not database layer
-- ✅ Negligible compared to network latency (5-50ms)
+- Minimal (< 0.1ms)
+- Occurs at Ruby layer, not database layer
+- Negligible compared to network latency (5-50ms)
 
 ### Bulk Data Processing
 
 ```ruby
-# ❌ Bad: Update one by one (slow)
+# Bad: Update one by one (slow)
 User.find_each do |user|
   user.update(email: user.email.strip.downcase)
 end
 
-# ✅ Good: Use SQL (fast)
+# Good: Use SQL (fast)
 User.where("email LIKE '% '").update_all(
   "email = TRIM(LOWER(email))"
 )
 
-# ✅ Better: Use normalizes, no batch update needed
+# Better: Use normalizes, no batch update needed
 # New data automatically normalized
 # Old data automatically normalized on next update
 ```
@@ -960,7 +960,7 @@ User.where("email LIKE '% '").update_all(
 
 #### Scenario 1: Rails 8 New Project (This Template)
 
-**✅ Use `normalizes` (Recommended)**
+**Yes Use `normalizes` (Recommended)**
 
 ```ruby
 # app/models/user.rb

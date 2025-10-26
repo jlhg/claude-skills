@@ -63,10 +63,10 @@ jemalloc is a high-performance memory allocator developed by FreeBSD, optimized 
 
 | Feature | glibc malloc | jemalloc |
 |---------|--------------|----------|
-| Memory fragmentation | ⚠️ High (multi-threaded) | ✅ Low |
-| Memory release | ❌ Slow (every 10 sec) | ✅ Fast (adjustable) |
-| Arena management | ⚠️ Per-thread independent | ✅ Unified management |
-| Multi-thread performance | ⚠️ Average | ✅ Excellent |
+| Memory fragmentation | Note: High (multi-threaded) | Yes Low |
+| Memory release | No Slow (every 10 sec) | Yes Fast (adjustable) |
+| Arena management | Note: Per-thread independent | Yes Unified management |
+| Multi-thread performance | Note: Average | Yes Excellent |
 
 ### Dockerfile Configuration (Built-in)
 
@@ -128,11 +128,11 @@ MALLOC_CONF="background_thread:true"
 ```
 
 **Advantages:**
-- ✅ Reduce main thread memory management overhead
-- ✅ Faster memory release
+- Reduce main thread memory management overhead
+- Faster memory release
 
 **Disadvantages:**
-- ⚠️ Additional CPU usage (minimal)
+- Note: Additional CPU usage (minimal)
 
 **Recommendation:** Enable
 
@@ -181,7 +181,7 @@ require 'memory_profiler'
 report = MemoryProfiler.report do
   # Suspicious code
   1000.times do
-    User.all.to_a  # ⚠️ Potential issue
+    User.all.to_a  # Note: Potential issue
   end
 end
 
@@ -428,7 +428,7 @@ end
 #### Problem: Loading all records
 
 ```ruby
-# ❌ Memory leak
+# Memory leak
 def export_users
   users = User.all.to_a  # Load 1 million records into memory!
   users.each do |user|
@@ -442,7 +442,7 @@ end
 #### Solution: Batch processing
 
 ```ruby
-# ✅ Correct approach
+# Correct approach
 def export_users
   User.find_each(batch_size: 1000) do |user|
     CsvRow.create(user)
@@ -458,7 +458,7 @@ end
 #### Problem:
 
 ```ruby
-# ❌ N+1 query
+# N+1 query
 def index
   @posts = Post.all
   # In view:
@@ -472,7 +472,7 @@ end
 #### Solution:
 
 ```ruby
-# ✅ Eager loading
+# Eager loading
 def index
   @posts = Post.includes(:author).all
   # Load all associations in one query
@@ -486,7 +486,7 @@ end
 #### Problem: Manual cache
 
 ```ruby
-# ❌ Memory leak
+# Memory leak
 class UserService
   def initialize
     @cache = {}
@@ -504,7 +504,7 @@ end
 #### Solution: Use Rails.cache
 
 ```ruby
-# ✅ Has TTL and eviction
+# Has TTL and eviction
 class UserService
   def find_user(id)
     Rails.cache.fetch("user:#{id}", expires_in: 1.hour) do
@@ -521,7 +521,7 @@ end
 #### Problem:
 
 ```ruby
-# ❌ Circular reference
+# Circular reference
 class Order
   def initialize
     @items = []
@@ -542,7 +542,7 @@ end
 #### Solution:
 
 ```ruby
-# ✅ Use WeakRef or break cycle
+# Use WeakRef or break cycle
 require 'weakref'
 
 class Order
@@ -562,7 +562,7 @@ end
 #### Problem:
 
 ```ruby
-# ❌ String concatenation
+# String concatenation
 def generate_csv
   csv = ""
   User.find_each do |user|
@@ -578,7 +578,7 @@ end
 #### Solution:
 
 ```ruby
-# ✅ Use StringIO or Array
+# Use StringIO or Array
 def generate_csv
   require 'stringio'
   csv = StringIO.new
@@ -605,7 +605,7 @@ end
 #### Problem:
 
 ```ruby
-# ❌ Job holds large amounts of data
+# Job holds large amounts of data
 class ReportJob < ApplicationJob
   def perform
     @users = User.all.to_a  # Load all
@@ -619,7 +619,7 @@ end
 #### Solution:
 
 ```ruby
-# ✅ Explicitly release
+# Explicitly release
 class ReportJob < ApplicationJob
   def perform
     process_users
@@ -778,12 +778,12 @@ GC.stat
 
 3. **Reduce object allocation**
    ```ruby
-   # ❌ Allocate new String each time
+   # Allocate new String each time
    def greet(name)
      "Hello, #{name}!"
    end
 
-   # ✅ Use frozen string
+   # Use frozen string
    GREETING_PREFIX = "Hello, "
    def greet(name)
      "#{GREETING_PREFIX}#{name}!"
@@ -804,7 +804,7 @@ Fragmentation: 700 MB (47%)
 - Frequent small object allocation/deallocation
 
 **Solution:**
-- ✅ **Use jemalloc** (already configured)
+- **Use jemalloc** (already configured)
 - jemalloc has better arena management, fragmentation < 10%
 
 ### Problem: jemalloc Not Active
@@ -859,13 +859,13 @@ ENV MALLOC_ARENA_MAX=2
 ```
 
 **Advantages:**
-- ✅ Smaller image size (~100MB vs ~220MB)
-- ✅ Simple configuration
+- Smaller image size (~100MB vs ~220MB)
+- Simple configuration
 
 **Disadvantages:**
-- ❌ Less memory optimization (30-40% vs 75%)
-- ❌ Still has memory fragmentation issues
-- ❌ Poorer multi-thread performance
+- Less memory optimization (30-40% vs 75%)
+- Still has memory fragmentation issues
+- Poorer multi-thread performance
 
 **Use cases:**
 - Development/testing environments
@@ -892,13 +892,13 @@ end
 ```
 
 **When to use:**
-- ✅ As temporary measure (while fixing real leaks)
-- ✅ Known slow leak but hard to fix
+- As temporary measure (while fixing real leaks)
+- Known slow leak but hard to fix
 
 **Why not recommended as long-term solution:**
-- ❌ Doesn't solve root problem
-- ❌ Restarting workers interrupts in-progress requests
-- ❌ Wastes resources (repeated startup)
+- Doesn't solve root problem
+- Restarting workers interrupts in-progress requests
+- Wastes resources (repeated startup)
 
 ### Option 3: Reduce Puma Workers
 
@@ -912,12 +912,12 @@ max_threads_count = ENV.fetch("RAILS_MAX_THREADS", 32).to_i
 ```
 
 **Advantages:**
-- ✅ Reduce total memory usage (2 × 1GB vs 4 × 1GB)
-- ✅ Reduce database connection count
+- Reduce total memory usage (2 × 1GB vs 4 × 1GB)
+- Reduce database connection count
 
 **Disadvantages:**
-- ❌ Lower concurrent processing capability
-- ❌ Not suitable for CPU-intensive applications
+- Lower concurrent processing capability
+- Not suitable for CPU-intensive applications
 
 **Use cases:**
 - I/O intensive applications

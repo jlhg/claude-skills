@@ -115,9 +115,9 @@ Enable Cloudflare default rules:
 ```
 Cloudflare Dashboard > Security > WAF > Managed rules
 
-✅ Cloudflare Managed Ruleset
-✅ Cloudflare OWASP Core Ruleset
-✅ Cloudflare Exposed Credentials Check
+Yes Cloudflare Managed Ruleset
+Yes Cloudflare OWASP Core Ruleset
+Yes Cloudflare Exposed Credentials Check
 ```
 
 ### Newly Discovered Attack Patterns (Based on Real Data Analysis)
@@ -284,30 +284,30 @@ This project provides a complete Rack::Attack configuration file covering all 25
 **File location**: `config/initializers/rack_attack.rb`
 
 **Coverage**:
-- ✅ Sensitive file access
-- ✅ PHP/WordPress probing
-- ✅ Admin panel probing
-- ✅ Directory traversal
-- ✅ SQL injection/XSS
-- ✅ Command injection
-- ✅ Laravel-specific attacks
-- ✅ Symfony Profiler
-- ✅ Spring Boot Actuator
-- ✅ Struts vulnerabilities
-- ✅ Nacos config center
-- ✅ File manager vulnerabilities
-- ✅ CI/CD config probing
-- ✅ IDE config probing
-- ✅ Node.js config files
-- ✅ Search engine probing
-- ✅ System file access
-- ✅ Application config files
-- ✅ Test/debug paths
-- ✅ Database files
-- ✅ Monitoring systems
-- ✅ Known scanner User-Agent
-- ✅ Rate limiting
-- ✅ Automatic logging
+- Sensitive file access
+- PHP/WordPress probing
+- Admin panel probing
+- Directory traversal
+- SQL injection/XSS
+- Command injection
+- Laravel-specific attacks
+- Symfony Profiler
+- Spring Boot Actuator
+- Struts vulnerabilities
+- Nacos config center
+- File manager vulnerabilities
+- CI/CD config probing
+- IDE config probing
+- Node.js config files
+- Search engine probing
+- System file access
+- Application config files
+- Test/debug paths
+- Database files
+- Monitoring systems
+- Known scanner User-Agent
+- Rate limiting
+- Automatic logging
 
 **How to enable**:
 
@@ -371,7 +371,7 @@ Rails.application.routes.draw do
   # All other requests return 404 (don't use catch-all route)
   # Let Rails naturally return 404 to avoid accidentally exposing information
 
-  # ❌ Don't use:
+  # Don't use:
   # match '*path', to: 'application#not_found', via: :all
 end
 ```
@@ -698,13 +698,13 @@ Based on the current multi-layer defense architecture, **Fail2Ban is NOT needed*
 
 | Feature | Cloudflare WAF | Rack::Attack | Fail2Ban | Assessment |
 |------|----------------|--------------|----------|------|
-| **Edge protection** | ✅ 99% attacks | ❌ | ❌ | CF already blocks most |
-| **Rate Limiting** | ✅ | ✅ | ✅ | Already two layers |
-| **IP blocking** | ✅ Automatic | ✅ Redis | ✅ iptables | Already two layers |
-| **App-layer awareness** | ⚠️ Basic | ✅ Complete | ❌ | Rack::Attack better |
-| **Docker friendly** | ✅ | ✅ | ⚠️ Needs special config | High deployment complexity |
-| **Maintenance cost** | ✅ Low | ✅ Low | ⚠️ Medium-High | Needs extra maintenance |
-| **Real-time effect** | ✅ | ✅ | ⚠️ Needs reload | Slower response |
+| **Edge protection** | Yes 99% attacks | No | No | CF already blocks most |
+| **Rate Limiting** | Yes | Yes | Yes | Already two layers |
+| **IP blocking** | Yes Automatic | Yes Redis | Yes iptables | Already two layers |
+| **App-layer awareness** | Note: Basic | Yes Complete | No | Rack::Attack better |
+| **Docker friendly** | Yes | Yes | Note: Needs special config | High deployment complexity |
+| **Maintenance cost** | Yes Low | Yes Low | Note: Medium-High | Needs extra maintenance |
+| **Real-time effect** | Yes | Yes | Note: Needs reload | Slower response |
 
 #### Fail2Ban Limitations
 
@@ -714,12 +714,12 @@ Based on the current multi-layer defense architecture, **Fail2Ban is NOT needed*
    services:
      fail2ban:
        image: crazymax/fail2ban
-       network_mode: "host"  # ⚠️ Loses Docker network isolation
+       network_mode: "host"  # Note: Loses Docker network isolation
        cap_add:
-         - NET_ADMIN         # ⚠️ Needs privileges
+         - NET_ADMIN         # Note: Needs privileges
          - NET_RAW
        volumes:
-         - /var/log:/var/log:ro  # ⚠️ Needs to mount host logs
+         - /var/log:/var/log:ro  # Note: Needs to mount host logs
    ```
 
 2. **Duplicate functionality**

@@ -24,13 +24,13 @@ This template uses **UUIDv7** as the default primary key type for all database t
 ├──────────────┬──────────┬──────────────┬────────────────────┤
 │ Type         │ Size     │ Insert (1M)  │ Security           │
 ├──────────────┼──────────┼──────────────┼────────────────────┤
-│ bigint       │ 8 bytes  │ 290 seconds  │ ❌ Leaks business  │
-│ UUIDv7       │ 16 bytes │ 290 seconds  │ ✅ Secure          │
-│ UUIDv4       │ 16 bytes │ 375 seconds  │ ✅ Secure          │
-│ ULID         │ 16 bytes │ ~290 seconds │ ✅ Secure          │
+│ bigint       │ 8 bytes  │ 290 seconds  │ Leaks business     │
+│ UUIDv7       │ 16 bytes │ 290 seconds  │ Secure             │
+│ UUIDv4       │ 16 bytes │ 375 seconds  │ Secure             │
+│ ULID         │ 16 bytes │ ~290 seconds │ Secure             │
 └──────────────┴──────────┴──────────────┴────────────────────┘
 
-✅ UUIDv7 = bigint performance + UUID security
+UUIDv7 = bigint performance + UUID security
 ```
 
 ## Why Not Use Auto-Incrementing IDs?
@@ -40,7 +40,7 @@ This template uses **UUIDv7** as the default primary key type for all database t
 Using sequential integer IDs exposes sensitive business information:
 
 ```ruby
-# ❌ Problem: Using bigint auto-increment
+# Problem: Using bigint auto-increment
 GET /api/orders/12345
 # → Reveals: "This company has ~12,345 orders"
 
@@ -50,10 +50,10 @@ GET /api/orders/12850  # One week later
 ```
 
 **Real-world risks**:
-- 📊 Competitors can estimate your business scale
-- 📈 Anyone can track your growth/decline rate
-- 🔍 Enumeration attacks (try ID 1, 2, 3...)
-- 🕵️ Infer temporal relationships between resources
+- Competitors can estimate your business scale
+- Anyone can track your growth/decline rate
+- Enumeration attacks (try ID 1, 2, 3...)
+- Infer temporal relationships between resources
 
 ### Enumeration Attacks
 
@@ -88,10 +88,10 @@ Example: 018f4d9e-5c4a-7000-9f8b-3a4c5d6e7f8a
 ```
 
 **Key properties**:
-- ✅ **Time-ordered**: Naturally sorted by creation time
-- ✅ **Random**: 68 random bits prevent prediction
-- ✅ **Unique**: Globally unique (no collisions)
-- ✅ **Standard**: RFC 9562 (supported by PostgreSQL 18+, MySQL 8.4+)
+- **Time-ordered**: Naturally sorted by creation time
+- **Random**: 68 random bits prevent prediction
+- **Unique**: Globally unique (no collisions)
+- **Standard**: RFC 9562 (supported by PostgreSQL 18+, MySQL 8.4+)
 
 ### Why UUIDv7 is Perfect for Rails 8 + PostgreSQL 18
 
@@ -120,7 +120,7 @@ Example: 018f4d9e-5c4a-7000-9f8b-3a4c5d6e7f8a
 | ID Type | Insert Time | Relative | Index Size |
 |---------|-------------|----------|------------|
 | **bigint** | 290 sec | 100% (baseline) | 21 MB |
-| **UUIDv7** | 290 sec | **100%** ✅ | 43 MB |
+| **UUIDv7** | 290 sec | **100%** | 43 MB |
 | UUIDv4 | 375 sec | 77% | 49 MB |
 | Text UUID | 410 sec | 71% | 65 MB |
 
@@ -190,7 +190,7 @@ end
 **Generated SQL**:
 ```sql
 CREATE TABLE orders (
-  id UUID PRIMARY KEY DEFAULT uuidv7(),  -- ✅ Uses PostgreSQL 18's native uuidv7()
+  id UUID PRIMARY KEY DEFAULT uuidv7(),  -- Uses PostgreSQL 18's native uuidv7()
   user_id UUID NOT NULL,
   status VARCHAR,
   total NUMERIC,
@@ -243,10 +243,10 @@ end
 
 | Feature | UUIDv4 | UUIDv7 |
 |---------|--------|--------|
-| Performance | ❌ 77% (random inserts) | ✅ 100% (time-ordered) |
-| Security | ✅ Unpredictable | ✅ Unpredictable |
-| Sortable | ❌ No meaning | ✅ By creation time |
-| Standard | ✅ RFC 4122 | ✅ RFC 9562 |
+| Performance | 77% (random inserts) | 100% (time-ordered) |
+| Security | Unpredictable | Unpredictable |
+| Sortable | No meaning | By creation time |
+| Standard | RFC 4122 | RFC 9562 |
 | DB Support | PostgreSQL 13+ | PostgreSQL 18+ |
 
 **Verdict**: Always use UUIDv7 over UUIDv4 (if on PostgreSQL 18+).
@@ -255,12 +255,12 @@ end
 
 | Feature | ULID | UUIDv7 |
 |---------|------|--------|
-| Performance | ✅ ≈ 100% | ✅ 100% |
-| Security | ✅ Unpredictable | ✅ Unpredictable |
+| Performance | ≈ 100% | 100% |
+| Security | Unpredictable | Unpredictable |
 | Structure | 48-bit time + 80-bit random | 48-bit time + 68-bit random |
 | Format | 26 chars (Base32) | 36 chars (hex + dashes) |
-| DB Native | ❌ Needs extension/gem | ✅ PostgreSQL 18+ native |
-| Standard | ❌ Community spec | ✅ RFC 9562 |
+| DB Native | Needs extension/gem | PostgreSQL 18+ native |
+| Standard | Community spec | RFC 9562 |
 
 **ULID encoding**: `01ARZ3NDEKTSV4RRFFQ69G5FAV` (26 characters)
 **UUIDv7 encoding**: `018f4d9e-5c4a-7000-9f8b-3a4c5d6e7f8a` (36 characters)
@@ -271,11 +271,11 @@ end
 
 | Scenario | Recommended | Reason |
 |----------|-------------|--------|
-| Public API resources (orders, users) | ✅ UUIDv7 | Security critical |
-| Internal tables (logs, metrics) | ⚠️ bigint | No exposure risk |
-| Join tables | ⚠️ bigint | Not directly accessible |
-| High-write tables (events, analytics) | ⚠️ bigint | Smaller storage |
-| Distributed systems | ✅ UUIDv7 | Global uniqueness |
+| Public API resources (orders, users) | UUIDv7 | Security critical |
+| Internal tables (logs, metrics) | bigint | No exposure risk |
+| Join tables | bigint | Not directly accessible |
+| High-write tables (events, analytics) | bigint | Smaller storage |
+| Distributed systems | UUIDv7 | Global uniqueness |
 
 ## Best Practices
 
@@ -284,21 +284,21 @@ end
 UUIDs provide security through obscurity, but **always implement proper authorization**:
 
 ```ruby
-# ❌ Wrong: Relying only on UUID secrecy
+# Wrong: Relying only on UUID secrecy
 class OrdersController < ApplicationController
   def show
     @order = Order.find(params[:id])  # Anyone with UUID can access!
   end
 end
 
-# ✅ Correct: UUID + authorization
+# Correct: UUID + authorization
 class OrdersController < ApplicationController
   def show
     @order = current_user.orders.find(params[:id])  # Scoped to user
   end
 end
 
-# ✅ Better: UUID + Pundit
+# Better: UUID + Pundit
 class OrdersController < ApplicationController
   def show
     @order = Order.find(params[:id])
@@ -322,7 +322,7 @@ UUIDs are larger (16 bytes vs 8 bytes), so indexing is important:
 ```ruby
 # Always index UUID foreign keys
 create_table :orders, id: :uuid do |t|
-  t.references :user, type: :uuid, foreign_key: true, index: true  # ✅
+  t.references :user, type: :uuid, foreign_key: true, index: true
 end
 
 # Compound indexes when needed
@@ -378,7 +378,7 @@ end
 class CreateOrders < ActiveRecord::Migration[8.0]
   def change
     create_table :orders, id: :uuid do |t|
-      t.references :user, type: :bigint, foreign_key: true  # ⚠️ Old users table uses bigint
+      t.references :user, type: :bigint, foreign_key: true  # Note: Old users table uses bigint
       t.timestamps
     end
   end

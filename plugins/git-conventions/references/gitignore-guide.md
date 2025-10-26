@@ -124,7 +124,7 @@ git rm --cached <filename>
 git commit -m "chore: stop tracking <filename>"
 ```
 
-⚠️ **Warning**: Some sources suggest `git rm --cached` may remove the file from your working directory in certain scenarios. Always backup important files first.
+Note: **Warning**: Some sources suggest `git rm --cached` may remove the file from your working directory in certain scenarios. Always backup important files first.
 
 ### Handle exceptions (negation patterns)
 

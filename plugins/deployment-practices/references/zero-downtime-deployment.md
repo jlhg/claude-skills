@@ -53,7 +53,7 @@ Timeline:
 │     ├─ V1 containers still handling requests             │
 │     └─ V2 containers starting up                         │
 │ T2: V2 ready, starts receiving traffic                   │
-│     ├─ V1 and V2 running simultaneously (⚠️ Critical)    │
+│     ├─ V1 and V2 running simultaneously (Note: Critical)    │
 │     └─ Load balancer gradually shifts traffic to V2      │
 │ T3: V1 containers gracefully shutting down               │
 │ T4: Only V2 running                                      │
@@ -73,7 +73,7 @@ Timeline:
 
 ### Examples: Wrong vs Correct
 
-#### ❌ Wrong: Directly removing a column
+#### Wrong: Directly removing a column
 
 ```ruby
 # Deployment 1: Remove email column
@@ -88,7 +88,7 @@ end
 # Users: 500 Internal Server Error
 ```
 
-#### ✅ Correct: Phased approach
+#### Correct: Phased approach
 
 ```ruby
 # === Deployment 1: Add new field ===
@@ -165,13 +165,13 @@ Phase 3: Contract
 
 | Operation | Risk Level | Zero-Downtime Strategy |
 |---------|---------|-------------------|
-| **ADD column (nullable)** | ✅ Safe | Execute directly |
-| **ADD column (NOT NULL)** | ⚠️ Dangerous | Two steps: nullable first, then NOT NULL |
-| **REMOVE column** | ❌ Dangerous | Expand-Contract (3 steps) |
-| **RENAME column** | ❌ Dangerous | Expand-Contract (3 steps) |
-| **ADD index** | ⚠️ Locks table | Use `algorithm: :concurrently` |
-| **CHANGE column type** | ❌ Dangerous | Add new column + migrate data + remove old |
-| **ADD foreign key** | ⚠️ Locks table | `validate: false` + manual validation |
+| **ADD column (nullable)** | Yes Safe | Execute directly |
+| **ADD column (NOT NULL)** | Note: Dangerous | Two steps: nullable first, then NOT NULL |
+| **REMOVE column** | No Dangerous | Expand-Contract (3 steps) |
+| **RENAME column** | No Dangerous | Expand-Contract (3 steps) |
+| **ADD index** | Note: Locks table | Use `algorithm: :concurrently` |
+| **CHANGE column type** | No Dangerous | Add new column + migrate data + remove old |
+| **ADD foreign key** | Note: Locks table | `validate: false` + manual validation |
 
 ### Real-World Cases
 
@@ -241,7 +241,7 @@ end
 #### Case 2: Adding a NOT NULL Column
 
 ```ruby
-# ❌ Dangerous: Directly add NOT NULL
+# Dangerous: Directly add NOT NULL
 class AddRequiredFieldToUsers < ActiveRecord::Migration[8.0]
   def change
     add_column :users, :phone, :string, null: false
@@ -249,7 +249,7 @@ class AddRequiredFieldToUsers < ActiveRecord::Migration[8.0]
   end
 end
 
-# ✅ Correct: Step-by-step approach
+# Correct: Step-by-step approach
 # Step 1: Add nullable column
 class AddPhoneToUsers < ActiveRecord::Migration[8.0]
   def change
@@ -284,14 +284,14 @@ end
 #### Case 3: Concurrent Index Creation (PostgreSQL)
 
 ```ruby
-# ❌ Wrong: Will lock table
+# Wrong: Will lock table
 class AddIndexToUsers < ActiveRecord::Migration[8.0]
   def change
     add_index :users, :email  # 💥 Locks table for seconds to minutes
   end
 end
 
-# ✅ Correct: No table lock
+# Correct: No table lock
 class AddIndexToUsers < ActiveRecord::Migration[8.0]
   disable_ddl_transaction!  # Required! CONCURRENTLY doesn't support transactions
 
@@ -304,14 +304,14 @@ end
 #### Case 4: Changing Column Type
 
 ```ruby
-# ❌ Dangerous: Directly change type
+# Dangerous: Directly change type
 class ChangeUserAgeType < ActiveRecord::Migration[8.0]
   def change
     change_column :users, :age, :bigint  # 💥 Locks table + data conversion
   end
 end
 
-# ✅ Correct: Expand-Contract
+# Correct: Expand-Contract
 # Step 1: Add new column
 class AddAgeIntToUsers < ActiveRecord::Migration[8.0]
   def change
@@ -351,7 +351,7 @@ end
 ### Data Migration Best Practices
 
 ```ruby
-# ❌ Wrong: Migrate large amounts of data in migration
+# Wrong: Migrate large amounts of data in migration
 class MigrateUserData < ActiveRecord::Migration[8.0]
   def change
     User.find_each do |user|
@@ -365,7 +365,7 @@ class MigrateUserData < ActiveRecord::Migration[8.0]
   end
 end
 
-# ✅ Correct: Use background jobs
+# Correct: Use background jobs
 class AddNewFieldToUsers < ActiveRecord::Migration[8.0]
   def change
     add_column :users, :new_field, :integer
@@ -491,13 +491,13 @@ Initial state: 4 V1 pods
 ├─ Step 5-6: Repeat...
 └─ Final: 4 V2 pods
 
-✅ Always maintain 4 available pods (zero-downtime)
+Yes Always maintain 4 available pods (zero-downtime)
 ```
 
 **Docker Compose notes:**
 
 ```yaml
-# ❌ Docker Compose doesn't support zero-downtime rolling update
+# Docker Compose doesn't support zero-downtime rolling update
 # docker compose restart web  # All containers restart simultaneously
 
 # Solution: Manual rolling update
@@ -536,13 +536,13 @@ kubectl patch service rails-app -p '{"spec":{"selector":{"version":"v1"}}}'
 ```
 
 **Advantages:**
-- ✅ Extremely fast switching (seconds)
-- ✅ Easy rollback
-- ✅ Can fully test new environment
+- Extremely fast switching (seconds)
+- Easy rollback
+- Can fully test new environment
 
 **Disadvantages:**
-- ❌ Requires 2x resources
-- ❌ Database migrations still need backward compatibility
+- Requires 2x resources
+- Database migrations still need backward compatibility
 
 ### 3. Canary Deployment
 
@@ -606,8 +606,8 @@ spec:
 # Controller: Rails::HealthController
 
 # Features:
-# ✅ Check if Rails app started successfully (no boot exceptions)
-# ❌ Does NOT check database, Redis, or other external dependencies
+# Check if Rails app started successfully (no boot exceptions)
+# Does NOT check database, Redis, or other external dependencies
 
 # Response:
 # 200 OK  - Application started normally
@@ -615,10 +615,10 @@ spec:
 ```
 
 **Use cases:**
-- ✅ Docker healthcheck
-- ✅ Kubernetes liveness probe
-- ✅ Load balancer health check
-- ✅ Basic application liveness detection
+- Docker healthcheck
+- Kubernetes liveness probe
+- Load balancer health check
+- Basic application liveness detection
 
 **When do you need custom health checks?**
 
@@ -890,7 +890,7 @@ kubectl rollout undo deployment/rails-app --to-revision=3
 **Important: Database migrations should usually NOT be rolled back!**
 
 ```ruby
-# ❌ Dangerous: Rolling back migrations can cause data loss
+# Dangerous: Rolling back migrations can cause data loss
 rails db:rollback
 
 # Example:
@@ -967,7 +967,7 @@ Flipper.disable(:new_feature)  # Immediately disable new feature, no redeploymen
 ### 1. NOT NULL Constraint
 
 ```ruby
-# ❌ Dangerous
+# Dangerous
 class AddRequiredFieldToUsers < ActiveRecord::Migration[8.0]
   def change
     add_column :users, :phone, :string, null: false
@@ -975,7 +975,7 @@ class AddRequiredFieldToUsers < ActiveRecord::Migration[8.0]
   end
 end
 
-# ✅ Correct: 4 steps
+# Correct: 4 steps
 # Step 1: Add nullable column
 add_column :users, :phone, :string
 
@@ -992,14 +992,14 @@ change_column_null :users, :phone, false
 ### 2. Enum Value Changes
 
 ```ruby
-# ❌ Dangerous: Changing enum order
+# Dangerous: Changing enum order
 class User < ApplicationRecord
   enum status: [:active, :inactive, :pending]
   # V2 changes to: [:pending, :active, :inactive]
   # 💥 Database 0 was active, now becomes pending!
 end
 
-# ✅ Safe: Explicitly specify values
+# Safe: Explicitly specify values
 class User < ApplicationRecord
   enum status: {
     active: 0,
@@ -1012,7 +1012,7 @@ class User < ApplicationRecord
     active: 0,
     inactive: 1,
     pending: 2,
-    suspended: 3  # ✅ Safe: Only add, don't change existing values
+    suspended: 3  # Safe: Only add, don't change existing values
   }
 end
 ```
@@ -1020,7 +1020,7 @@ end
 ### 3. API Response Format Changes
 
 ```ruby
-# ❌ Dangerous: Directly change JSON structure
+# Dangerous: Directly change JSON structure
 # V1
 def show
   render json: { user: { name: user.name } }
@@ -1032,7 +1032,7 @@ def show
   # 💥 Frontend V1 code will crash: Cannot read user.name
 end
 
-# ✅ Safe: API versioning
+# Safe: API versioning
 # config/routes.rb
 namespace :api do
   namespace :v1 do
@@ -1060,7 +1060,7 @@ end
 ### 4. Removing Index
 
 ```ruby
-# ❌ Dangerous: Directly remove index
+# Dangerous: Directly remove index
 class RemoveIndexFromUsers < ActiveRecord::Migration[8.0]
   def change
     remove_index :users, :email
@@ -1068,7 +1068,7 @@ class RemoveIndexFromUsers < ActiveRecord::Migration[8.0]
   end
 end
 
-# ✅ Correct:
+# Correct:
 # 1. First deploy code that doesn't use this index
 # 2. Monitor query performance
 # 3. After confirming no issues, remove index
@@ -1077,7 +1077,7 @@ end
 ### 5. Foreign Key Constraint
 
 ```ruby
-# ❌ Dangerous: Directly add foreign key
+# Dangerous: Directly add foreign key
 class AddForeignKeyToOrders < ActiveRecord::Migration[8.0]
   def change
     add_foreign_key :orders, :users
@@ -1085,7 +1085,7 @@ class AddForeignKeyToOrders < ActiveRecord::Migration[8.0]
   end
 end
 
-# ✅ Safe: Two steps
+# Safe: Two steps
 # Step 1: Add foreign key but don't validate
 class AddForeignKeyToOrders < ActiveRecord::Migration[8.0]
   def change

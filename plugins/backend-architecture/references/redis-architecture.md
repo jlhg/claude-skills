@@ -63,15 +63,15 @@ This template uses **Valkey** as the default in-memory data store instead of Red
 
 | Feature | Valkey 8.x | Valkey 7.x | Redis 7.2 | Redis 7.4+ |
 |---------|-----------|-----------|-----------|------------|
-| RESP Protocol | ✅ | ✅ | ✅ | ✅ |
-| All Redis Commands | ✅ | ✅ | ✅ | ✅ |
-| Pub/Sub | ✅ | ✅ | ✅ | ✅ |
-| Clustering | ✅ | ✅ | ✅ | ✅ |
-| Sentinel | ✅ | ✅ | ✅ | ✅ |
-| Modules API | ✅ | ✅ | ✅ | ⚠️ (licensing) |
-| redis-rb gem | ✅ | ✅ | ✅ | ✅ |
+| RESP Protocol | Yes | Yes | Yes | Yes |
+| All Redis Commands | Yes | Yes | Yes | Yes |
+| Pub/Sub | Yes | Yes | Yes | Yes |
+| Clustering | Yes | Yes | Yes | Yes |
+| Sentinel | Yes | Yes | Yes | Yes |
+| Modules API | Yes | Yes | Yes | Note: (licensing) |
+| redis-rb gem | Yes | Yes | Yes | Yes |
 | License | BSD-3 | BSD-3 | BSD-3 | RSALv2/SSPLv1 |
-| Performance | 🚀 3x faster | ✅ | ✅ | ✅ |
+| Performance | 3x faster | Yes | Yes | Yes |
 
 ### Migration from Redis
 
@@ -89,7 +89,7 @@ If you're migrating an existing Redis deployment to Valkey:
 | Throughput | **100%** | 60% | 33% | 3x improvement over Redis |
 | Memory Efficiency | **100%** | 95% | 105% | Best-in-class memory usage |
 | Latency (p99) | **100%** | 105% | 110% | Lowest latency |
-| Multi-threading | ✅ Enhanced | ✅ Good | ⚠️ Limited | Better CPU utilization |
+| Multi-threading | Yes Enhanced | Yes Good | Note: Limited | Better CPU utilization |
 
 Source: [Valkey 8.0 announcement](https://valkey.io/blog/)
 
@@ -146,11 +146,11 @@ This way you can keep the original `compose.yaml` unchanged.
 
 ### No Other Changes Needed
 
-- ✅ Rails configuration stays the same (gem/redis.rb)
-- ✅ Environment variables stay the same
-- ✅ Connection URLs stay the same
-- ✅ All commands work identically
-- ✅ No code changes in your application
+- Rails configuration stays the same (gem/redis.rb)
+- Environment variables stay the same
+- Connection URLs stay the same
+- All commands work identically
+- No code changes in your application
 
 The `redis-rb` gem works with both Valkey and Redis transparently.
 
@@ -270,24 +270,24 @@ redis_session:
 
 **Single Valkey/Redis with multiple DBs**:
 ```yaml
-# ❌ Problem: Global maxmemory-policy applies to ALL databases
+# Problem: Global maxmemory-policy applies to ALL databases
 redis:
   maxmemory: 2gb
   maxmemory-policy: allkeys-lru  # Applies to DB 0, 1, 2...
 ```
 
 If you use `allkeys-lru`:
-- ✅ Cache works well (can evict old data)
-- ❌ **Sessions might be evicted** (users logged out unexpectedly!)
-- ❌ **ActionCable channels evicted** (WebSocket connections broken!)
+- Cache works well (can evict old data)
+- **Sessions might be evicted** (users logged out unexpectedly!)
+- **ActionCable channels evicted** (WebSocket connections broken!)
 
 If you use `noeviction`:
-- ✅ Sessions are safe
-- ❌ **Cache fills up and stops accepting writes** (Valkey/Redis returns errors!)
+- Sessions are safe
+- **Cache fills up and stops accepting writes** (Valkey/Redis returns errors!)
 
 **Multiple Valkey/Redis instances**:
 ```yaml
-# ✅ Solution: Each instance has its own policy
+# Solution: Each instance has its own policy
 redis_cache:
   maxmemory-policy: allkeys-lru   # Can evict
 redis_session:
@@ -304,12 +304,12 @@ Rails.cache.clear
 
 # Risk: If you accidentally run FLUSHDB on wrong DB:
 Redis.new.select(2)  # Oops, selected session DB
-Redis.new.flushdb    # ❌ All user sessions gone!
+Redis.new.flushdb    # All user sessions gone!
 ```
 
 **Multiple Valkey/Redis instances**:
 ```ruby
-# ✅ Physically separate instances
+# Physically separate instances
 REDIS_CACHE.with { |r| r.flushdb }    # Only cache affected
 REDIS_SESSION.with { |r| r.flushdb }  # Completely separate
 ```
@@ -318,7 +318,7 @@ REDIS_SESSION.with { |r| r.flushdb }  # Completely separate
 
 **Single Valkey/Redis with multiple DBs**:
 ```yaml
-# ❌ Problem: All DBs share same persistence settings
+# Problem: All DBs share same persistence settings
 redis:
   appendonly: yes  # Slows down cache writes
   # OR
@@ -327,7 +327,7 @@ redis:
 
 **Multiple Valkey/Redis instances**:
 ```yaml
-# ✅ Solution: Optimized for each use case
+# Solution: Optimized for each use case
 redis_cache:
   save: ""                    # No persistence (fast writes)
 redis_session:
@@ -767,7 +767,7 @@ At this scale, consider:
 ```yaml
 redis:
   maxmemory: 2gb
-  maxmemory-policy: allkeys-lru  # ❌ Affects all DBs
+  maxmemory-policy: allkeys-lru  # Affects all DBs
 
 # DB 0: Cache
 # DB 1: Cable
@@ -779,10 +779,10 @@ redis:
 - Lower resource overhead
 
 **Cons**:
-- ❌ Same eviction policy for all
-- ❌ Same persistence for all
-- ❌ FLUSHDB risks
-- ❌ Cannot scale independently
+- Same eviction policy for all
+- Same persistence for all
+- FLUSHDB risks
+- Cannot scale independently
 
 **When to use**: Development only
 
@@ -825,9 +825,9 @@ redis:
 - Low resource usage
 
 **Cons**:
-- ❌ Cache cannot evict (will error when full)
-- ❌ Poor performance (persistence slows cache)
-- ❌ No fault isolation
+- Cache cannot evict (will error when full)
+- Poor performance (persistence slows cache)
+- No fault isolation
 
 **When to use**: Only for prototypes/demos
 
@@ -951,11 +951,11 @@ Rails.cache.delete("key")
 ```
 
 **Features:**
-- ✅ Automatically adds namespace (e.g., `rails:cache:user:1:profile`)
-- ✅ High-level abstraction, easy to use
-- ✅ Built-in error handling (error_handler callback)
-- ✅ Supports marshal serialization of ActiveRecord objects
-- ✅ Automatic connection pool management
+- Automatically adds namespace (e.g., `rails:cache:user:1:profile`)
+- High-level abstraction, easy to use
+- Built-in error handling (error_handler callback)
+- Supports marshal serialization of ActiveRecord objects
+- Automatic connection pool management
 
 **Use cases:**
 - Fragment caching
@@ -979,10 +979,10 @@ end
 ```
 
 **Features:**
-- ✅ No namespace (direct access to raw keys)
-- ✅ Complete Redis command set
-- ✅ Used for health checks, monitoring
-- ✅ Consistent API style with REDIS_SESSION, REDIS_CABLE
+- No namespace (direct access to raw keys)
+- Complete Redis command set
+- Used for health checks, monitoring
+- Consistent API style with REDIS_SESSION, REDIS_CABLE
 
 **Use cases:**
 - Health checks (ping)
@@ -1009,19 +1009,19 @@ end
 ```
 
 **No resource duplication:**
-- ✅ Same Redis server (`redis_cache:6379`)
-- ✅ Same pool size (both are `RAILS_MAX_THREADS`)
-- ✅ Same data (just different access methods)
+- Same Redis server (`redis_cache:6379`)
+- Same pool size (both are `RAILS_MAX_THREADS`)
+- Same data (just different access methods)
 
 #### Usage Recommendations
 
 ```ruby
-# ✅ Prefer Rails.cache (99% of cases)
+# Prefer Rails.cache (99% of cases)
 Rails.cache.fetch("report:#{date}", expires_in: 1.hour) do
   generate_report(date)
 end
 
-# ✅ Use REDIS_CACHE for specific scenarios
+# Use REDIS_CACHE for specific scenarios
 # 1. Health checks
 def redis_healthy?
   REDIS_CACHE.with { |r| r.ping == "PONG" }
@@ -1042,19 +1042,19 @@ end
 
 1. **Health checks need direct ping**
    ```ruby
-   # ✅ Works
+   # Works
    REDIS_CACHE.with { |r| r.ping }
 
-   # ❌ Rails.cache has no ping method
+   # Rails.cache has no ping method
    Rails.cache.ping  # NoMethodError
    ```
 
 2. **Monitoring needs INFO command**
    ```ruby
-   # ✅ Works
+   # Works
    REDIS_CACHE.with { |r| r.info('stats') }
 
-   # ❌ Rails.cache doesn't provide info
+   # Rails.cache doesn't provide info
    Rails.cache.info  # NoMethodError
    ```
 
@@ -1119,7 +1119,7 @@ Both use the `connection_pool` gem, just for different purposes.
 #### Problem: Single Valkey/Redis + multiple DBs
 
 ```yaml
-# ❌ Problem configuration
+# Problem configuration
 redis:
   maxmemory: 2gb
   maxmemory-policy: allkeys-lru  # ← Applies to ALL DBs!
@@ -1133,17 +1133,17 @@ redis:
 **Conflict 1: Eviction policy**
 - Cache (DB 0) needs `allkeys-lru` (can evict old data)
 - Session (DB 2) needs `noeviction` (cannot evict user data)
-- ❌ **Cannot satisfy both!**
+- **Cannot satisfy both!**
 
 **Conflict 2: Persistence**
 - Cache (DB 0) doesn't need persistence (cache can be rebuilt)
 - Session (DB 2) needs AOF persistence (cannot lose user data)
-- ❌ **Cannot satisfy both!**
+- **Cannot satisfy both!**
 
 #### Solution: Three independent Valkey/Redis instances
 
 ```yaml
-# ✅ Each has independent configuration
+# Each has independent configuration
 redis_cache:
   maxmemory-policy: allkeys-lru
   save: ""  # No persistence
@@ -1163,17 +1163,17 @@ See [Why Multiple Valkey/Redis Instances?](#why-multiple-valkeyredis-instances) 
 
 #### Memcached Advantages
 
-- ✅ Slightly faster (minimal difference)
-- ✅ More stable memory usage
-- ✅ Simpler (no persistence options)
+- Slightly faster (minimal difference)
+- More stable memory usage
+- Simpler (no persistence options)
 
 #### Memcached Disadvantages
 
-- ❌ No persistence (Redis has optional persistence)
-- ❌ No data structures (Redis has SET, HASH, LIST, etc.)
-- ❌ Cannot use for Rack::Attack (needs atomic INCR operation)
-- ❌ Cannot use for ActionCable (needs pub/sub)
-- ❌ Cannot use for session storage (needs persistence)
+- No persistence (Redis has optional persistence)
+- No data structures (Redis has SET, HASH, LIST, etc.)
+- Cannot use for Rack::Attack (needs atomic INCR operation)
+- Cannot use for ActionCable (needs pub/sub)
+- Cannot use for session storage (needs persistence)
 
 #### Conclusion
 
@@ -1264,11 +1264,11 @@ This template uses **Valkey by default** (100% Redis-compatible, fully open sour
 3. **redis_session**: Critical data with persistence
 
 This architecture provides:
-- ✅ Optimal performance for each use case
-- ✅ Fault isolation
-- ✅ Independent scaling
-- ✅ Data safety where it matters
-- ✅ Fully open source (BSD-3 license)
+- Optimal performance for each use case
+- Fault isolation
+- Independent scaling
+- Data safety where it matters
+- Fully open source (BSD-3 license)
 
 For most applications, this setup is **production-ready** and scales to thousands of concurrent users.
 

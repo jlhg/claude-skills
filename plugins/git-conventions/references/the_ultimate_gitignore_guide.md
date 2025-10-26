@@ -488,7 +488,7 @@ To tell Git to stop tracking a file (aka ignoring it) you can use `git rm --cach
 
 See also [“How do I make Git forget about a file that was tracked, but is now in .gitignore?”](https://stackoverflow.com/questions/1274057/how-do-i-make-git-forget-about-a-file-that-was-tracked-but-is-now-in-gitignore).
 
-⚠️ The [top-scoring answer](https://stackoverflow.com/a/1274447) has been recently updated:
+Note: The [top-scoring answer](https://stackoverflow.com/a/1274447) has been recently updated:
 
 > _Do NOT use `git rm --cached <file>` if you ever want to see that file again. It will remove it from git, and also your local machine._
 
@@ -640,7 +640,7 @@ While `.gitignore` helps keep your Git repository organized by excluding unneces
 
 The [`git clean`](https://git-scm.com/docs/git-clean) command does exactly what its name suggests: it "cleans up" your working directory by removing files you don't care about—often referred to as "unmanaged" or "non-essential" files. These include files that are either untracked, ignored, or both, depending on the options you specify when running `git clean`. The command operates recursively from the current directory (which can be a subdirectory of subdirectory of your working directory), and respects the exclude rules specified in `.gitignore`.
 
-⚠️ **Caution:** the `git clean` command should _always be used with caution_, as it can permanently delete untracked files or directories from your working directory! 
+Note: **Caution:** the `git clean` command should _always be used with caution_, as it can permanently delete untracked files or directories from your working directory! 
 
 Think of it as tidying up a cluttered desk: you sweep away scraps of paper and junk (untracked or ignored files) but must be careful not to toss out anything important (valuable files you want to keep). The option [`-n`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--n) (or equivalently [`--dry-run`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--n)) enables the safe use of `git clean` by displaying which files would be deleted without actually removing them.  This is like sorting through the pile first to ensure nothing crucial gets thrown away.
 

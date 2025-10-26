@@ -149,11 +149,11 @@ Rails built-in encrypted configuration management.
 Choose database primary key types based on security, performance, and scalability needs.
 
 **Default recommendation: UUIDv7**
-- ✅ Prevents business intelligence leakage (no sequential IDs)
-- ✅ Same performance as bigint (time-ordered, append-only B-tree)
-- ✅ Native PostgreSQL 18+ / MySQL 8.4+ support
-- ✅ Globally unique for distributed systems
-- ⚠️ Larger storage (16 bytes vs 8 bytes)
+- Prevents business intelligence leakage (no sequential IDs)
+- Same performance as bigint (time-ordered, append-only B-tree)
+- Native PostgreSQL 18+ / MySQL 8.4+ support
+- Globally unique for distributed systems
+- **Note:** Larger storage (16 bytes vs 8 bytes)
 
 **When to use bigint:**
 - Internal tables not exposed via API
@@ -166,12 +166,12 @@ Choose database primary key types based on security, performance, and scalabilit
 UUIDs prevent enumeration attacks but always implement proper authorization:
 
 ```ruby
-# ✅ Correct: UUID + authorization
+# Correct: UUID + authorization
 def show
   @order = current_user.orders.find(params[:id])
 end
 
-# ❌ Wrong: Relying only on UUID secrecy
+# Wrong: Relying only on UUID secrecy
 def show
   @order = Order.find(params[:id])
 end

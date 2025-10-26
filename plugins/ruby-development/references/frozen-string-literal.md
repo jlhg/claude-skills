@@ -25,19 +25,19 @@ This project enables `frozen_string_literal` by default through Ruby's `RUBYOPT`
 ```ruby
 # After enabling frozen_string_literal
 
-# ❌ This will throw FrozenError
+# This will throw FrozenError
 name = "John"
 name << " Doe"
 
-# ✅ Correct approach - create new string
+# Correct approach - create new string
 name = "John"
 name = name + " Doe"  # or use +=
 
-# ✅ If you need a mutable string, explicitly use dup or String.new
+# If you need a mutable string, explicitly use dup or String.new
 name = "John".dup
 name << " Doe"  # Now you can modify it
 
-# ✅ Use string interpolation
+# Use string interpolation
 first_name = "John"
 full_name = "#{first_name} Doe"
 ```
@@ -109,9 +109,9 @@ puts "String literal frozen? #{str.frozen?}"
 # Test 2: Try to modify (should throw error)
 begin
   str << " modified"
-  puts "❌ FAIL: String was modified (frozen_string_literal NOT enabled)"
+  puts "No FAIL: String was modified (frozen_string_literal NOT enabled)"
 rescue FrozenError => e
-  puts "✅ PASS: Cannot modify frozen string (frozen_string_literal IS enabled)"
+  puts "Yes PASS: Cannot modify frozen string (frozen_string_literal IS enabled)"
   puts "   Error: #{e.message}"
 end
 ```
@@ -132,7 +132,7 @@ Ruby version: 3.4.x
 RUBYOPT: --enable-frozen-string-literal
 
 String literal frozen? true
-✅ PASS: Cannot modify frozen string (frozen_string_literal IS enabled)
+Yes PASS: Cannot modify frozen string (frozen_string_literal IS enabled)
    Error: can't modify frozen String: "test"
 ```
 
@@ -152,11 +152,11 @@ If you encounter `FrozenError` in your code, there are several solutions:
 #### 1. Use String Concatenation (Recommended)
 
 ```ruby
-# ❌ Don't do this
+# Don't do this
 str = "Hello"
 str << " World"
 
-# ✅ Do this instead
+# Do this instead
 str = "Hello"
 str = str + " World"
 # or
@@ -166,11 +166,11 @@ str += " World"
 #### 2. Use String Interpolation
 
 ```ruby
-# ❌ Don't do this
+# Don't do this
 name = "John"
 name << " Doe"
 
-# ✅ Do this instead
+# Do this instead
 first_name = "John"
 last_name = "Doe"
 full_name = "#{first_name} #{last_name}"

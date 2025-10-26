@@ -60,11 +60,11 @@ For API-only Rails applications, you need a strategy to authenticate users acros
 3. **Logout**: Delete from both Redis and PostgreSQL
 
 **Benefits**:
-- ⚡ Fast: 95%+ requests served from Redis (< 1ms)
-- 🔒 Reliable: PostgreSQL ensures no data loss
-- 🚀 Scalable: Redis handles high request rates
-- 📊 Auditable: PostgreSQL tracks token history
-- 🛡️ Recoverable: Works even if Redis fails
+- Fast: 95%+ requests served from Redis (< 1ms)
+- Reliable: PostgreSQL ensures no data loss
+- Scalable: Redis handles high request rates
+- Auditable: PostgreSQL tracks token history
+- Recoverable: Works even if Redis fails
 
 ## Why Redis + PostgreSQL?
 
@@ -81,15 +81,15 @@ token = JWT.encode({ user_id: user.id, exp: 24.hours.from_now }, secret)
 - Can include claims (roles, permissions)
 
 **Fatal Flaws**:
-- ❌ **Cannot revoke** (until expiration)
-- ❌ **Cannot track active sessions**
-- ❌ **Security risk**: Stolen token works until expiry
+- **Cannot revoke** (until expiration)
+- **Cannot track active sessions**
+- **Security risk**: Stolen token works until expiry
 
 **Example scenario**:
 ```
 1. User reports: "My account was hacked!"
 2. You: "I'll immediately revoke all sessions"
-3. Reality: ❌ Cannot revoke JWT tokens
+3. Reality: No Cannot revoke JWT tokens
 4. Hacker: Still has valid JWT for next 24 hours
 ```
 
@@ -107,15 +107,15 @@ REDIS_SESSION.with { |r| r.setex("token:#{token}", 24.hours, user.id) }
 - Simple implementation
 
 **Fatal Flaws**:
-- ❌ **Data loss risk**: Redis restart = all users logged out
-- ❌ **No audit trail**: Cannot track token history
-- ❌ **No recovery**: Lost data is gone forever
+- **Data loss risk**: Redis restart = all users logged out
+- **No audit trail**: Cannot track token history
+- **No recovery**: Lost data is gone forever
 
 **Example scenario**:
 ```
 1. Redis crashes/restarts
-2. All 10,000 active users: ❌ Logged out immediately
-3. Support tickets: 📈📈📈
+2. All 10,000 active users: No Logged out immediately
+3. Support tickets: Spike dramatically
 4. You: "Sorry, we lost all sessions"
 ```
 
@@ -139,11 +139,11 @@ REDIS_SESSION.with { |r| r.setex("token:#{token}", 24.hours, user.id) }
 ```
 
 **Achieves**:
-- ✅ Speed: Redis cache (< 1ms)
-- ✅ Reliability: PostgreSQL persistence
-- ✅ Revocation: Delete Redis key (immediate)
-- ✅ Audit: PostgreSQL tracks everything
-- ✅ Recovery: Redis crash = minor slowdown (not disaster)
+- Speed: Redis cache (< 1ms)
+- Reliability: PostgreSQL persistence
+- Revocation: Delete Redis key (immediate)
+- Audit: PostgreSQL tracks everything
+- Recovery: Redis crash = minor slowdown (not disaster)
 
 ## Token Storage Strategy
 
@@ -170,11 +170,11 @@ end
 
 **Why store digest, not plaintext?**
 ```ruby
-# ❌ Never store plaintext
+# Never store plaintext
 token = "abc123"
 AccessToken.create!(token: token)  # Database breach = all tokens stolen
 
-# ✅ Store digest
+# Store digest
 token = SecureRandom.urlsafe_base64(32)
 digest = Digest::SHA256.hexdigest(token)
 AccessToken.create!(token_digest: digest)  # Database breach = tokens safe
@@ -303,20 +303,20 @@ end
 ### 1. Token Entropy
 
 ```ruby
-# ✅ Good: 256-bit entropy
+# Good: 256-bit entropy
 SecureRandom.urlsafe_base64(32)  # 43 chars, URL-safe
 
-# ❌ Bad: Low entropy
+# Bad: Low entropy
 SecureRandom.hex(8)  # Only 64-bit (bruteforceable)
 ```
 
 ### 2. Short Expiration
 
 ```ruby
-# ✅ Access tokens: Short-lived
+# Access tokens: Short-lived
 expires_at: 1.day.from_now  # or even 1.hour
 
-# ✅ Refresh tokens: Longer-lived (separate implementation)
+# Refresh tokens: Longer-lived (separate implementation)
 refresh_token_expires_at: 30.days.from_now
 ```
 
@@ -328,23 +328,23 @@ refresh_token_expires_at: 30.days.from_now
 ### 3. Never Store Plaintext
 
 ```ruby
-# ❌ NEVER
+# NEVER
 AccessToken.create!(token: raw_token)
 
-# ✅ ALWAYS
+# ALWAYS
 AccessToken.create!(token_digest: Digest::SHA256.hexdigest(raw_token))
 ```
 
 ### 4. Secure Transmission
 
 ```ruby
-# ✅ HTTPS only in production
+# HTTPS only in production
 config.force_ssl = true
 
-# ✅ Authorization header (not URL/body)
+# Authorization header (not URL/body)
 Authorization: Bearer <token>
 
-# ❌ Never in URL
+# Never in URL
 GET /api/users?token=abc123  # Logged in server logs!
 ```
 
@@ -414,10 +414,10 @@ production:
 ### Async Updates
 
 ```ruby
-# ❌ Slow: Update last_used_at synchronously
+# Slow: Update last_used_at synchronously
 token.update!(last_used_at: Time.current)  # Blocks request
 
-# ✅ Fast: Update asynchronously
+# Fast: Update asynchronously
 UpdateTokenLastUsedJob.perform_later(token.id)
 ```
 
@@ -503,9 +503,9 @@ end
 - Simple to implement
 
 **Cons**:
-- ❌ **Not suitable for APIs** (cookies don't work well with mobile apps, SPAs)
-- ❌ CSRF protection needed
-- ❌ Cookie size limits
+- **Not suitable for APIs** (cookies don't work well with mobile apps, SPAs)
+- CSRF protection needed
+- Cookie size limits
 
 **When to use**: Traditional Rails apps with server-rendered views (not APIs)
 
@@ -521,10 +521,10 @@ When building frontend applications that consume your API, you need to decide wh
 
 | Storage Type | Security | Persistence | Recommended |
 |-------------|----------|-------------|-------------|
-| **localStorage** | ❌ Low | Survives page refresh | **NO** |
-| **sessionStorage** | ❌ Low | Cleared on tab close | **NO** |
-| **httpOnly Cookie** | ✅ High | Configurable | **YES** |
-| **Memory only** | ✅ Highest | Lost on page refresh | For high-security scenarios |
+| **localStorage** | No Low | Survives page refresh | **NO** |
+| **sessionStorage** | No Low | Cleared on tab close | **NO** |
+| **httpOnly Cookie** | Yes High | Configurable | **YES** |
+| **Memory only** | Yes Highest | Lost on page refresh | For high-security scenarios |
 
 ### Recommended: httpOnly Cookie
 
@@ -584,7 +584,7 @@ Frontend                          Backend
       │  Cookie: access_token=expired    │
       ├─────────────────────────────────>│
       │                              1. Verify token
-      │                              2. Token expired ❌
+      │                              2. Token expired (failed)
       │                                  │
       │  401 Unauthorized                │
       │<─────────────────────────────────┤
@@ -611,15 +611,15 @@ Frontend                          Backend
 
 **Why httpOnly Cookie?**
 
-✅ **Advantages**:
+Yes **Advantages**:
 - JavaScript cannot access the token (protection against XSS attacks)
 - Automatically sent with every request (no manual header management)
 - Can set security flags (`secure`, `sameSite`)
 - Works seamlessly with CORS when configured properly
 
-❌ **Why NOT localStorage/sessionStorage?**:
+No **Why NOT localStorage/sessionStorage?**:
 ```javascript
-// ❌ VULNERABLE to XSS attacks
+// No VULNERABLE to XSS attacks
 localStorage.setItem('access_token', token);
 
 // If attacker injects malicious script:
@@ -873,7 +873,7 @@ end
 |--------|----------------|------------------------|
 | Security | High | Highest |
 | UX | Seamless | Good (auto-refresh on reload) |
-| XSS Protection | ✅ Complete | ✅ Complete |
+| XSS Protection | Yes Complete | Yes Complete |
 | Persistence | Survives reload | Lost on reload (auto-restored) |
 | Implementation | Simple | More complex |
 | Use Cases | Most applications | Banking, healthcare, finance |
@@ -1021,7 +1021,7 @@ When implementing frontend authentication, ensure these security measures are in
 
 #### Common Mistakes to Avoid
 
-❌ **Don't do this**:
+No **Don't do this**:
 ```javascript
 // Storing token in localStorage (vulnerable to XSS)
 localStorage.setItem('token', token);
@@ -1033,7 +1033,7 @@ fetch(`/api/users?token=${token}`);
 fetch('/api/users');  // Missing credentials option
 ```
 
-✅ **Do this instead**:
+Yes **Do this instead**:
 ```javascript
 // Let httpOnly cookies handle token storage
 // No manual token management needed
@@ -1084,7 +1084,7 @@ Promise.all([
 ]);
 
 // If access_token is expired, all three return 401
-// If each request tries to refresh, 3 refresh requests are sent! ⚠️
+// If each request tries to refresh, 3 refresh requests are sent! (Warning: Race condition)
 ```
 
 **Visual representation:**
@@ -1094,18 +1094,18 @@ Time →  Request 1    Request 2    Request 3
            ↓            ↓            ↓
         [401] ←─────[401] ←──────[401]
            ↓            ↓            ↓
-     Refresh!      Refresh!      Refresh!   ❌ Race condition!
+     Refresh!      Refresh!      Refresh!   No Race condition!
            ↓            ↓            ↓
     /auth/refresh /auth/refresh /auth/refresh
 ```
 
 #### Impact of Race Condition
 
-1. ❌ **Multiple refresh requests**: Wastes bandwidth and server resources
-2. ❌ **Token confusion**: Multiple new access tokens generated, unclear which is valid
-3. ❌ **Backend load**: Unnecessary duplicate requests to PostgreSQL/Redis
-4. ❌ **Security concerns**: May trigger rate limiting or be flagged as attack
-5. ❌ **Unpredictable behavior**: Some requests may succeed while others fail
+1. No **Multiple refresh requests**: Wastes bandwidth and server resources
+2. No **Token confusion**: Multiple new access tokens generated, unclear which is valid
+3. No **Backend load**: Unnecessary duplicate requests to PostgreSQL/Redis
+4. No **Security concerns**: May trigger rate limiting or be flagged as attack
+5. No **Unpredictable behavior**: Some requests may succeed while others fail
 
 #### Solution 1: Request Queue Management (Vanilla JavaScript)
 
@@ -1206,7 +1206,7 @@ Time →  Request 1     Request 2     Request 3
            ↓             ↓             ↓
       refreshToken() ←──┴─────────────┘
            ↓         (wait for same promise)
-    /auth/refresh  ✅ Only ONE refresh request
+    /auth/refresh  Yes Only ONE refresh request
            ↓
      [Success]
            ↓
@@ -1312,10 +1312,10 @@ async function loadDashboard() {
 ```
 
 **Benefits of axios interceptor approach:**
-- ✅ Transparent to application code (no need to change fetch calls)
-- ✅ Centralized error handling
-- ✅ Automatic request queuing
-- ✅ Works with all axios methods (get, post, put, delete)
+- Transparent to application code (no need to change fetch calls)
+- Centralized error handling
+- Automatic request queuing
+- Works with all axios methods (get, post, put, delete)
 
 #### Solution 3: Proactive Token Refresh
 
@@ -1411,9 +1411,9 @@ async function logout() {
 ```
 
 **Benefits:**
-- ✅ Reduces race condition probability (token rarely expires during requests)
-- ✅ Better user experience (no mid-request delays)
-- ✅ Predictable refresh timing
+- Reduces race condition probability (token rarely expires during requests)
+- Better user experience (no mid-request delays)
+- Predictable refresh timing
 
 **Combine with Solution 1 or 2** for best results:
 - Proactive refresh prevents most race conditions
@@ -1520,10 +1520,10 @@ end
 ```
 
 **Security benefits:**
-- ✅ Stolen refresh token is invalidated after first use
-- ✅ Detects token replay attacks (reuse of revoked token)
-- ✅ Can revoke all sessions if attack detected
-- ✅ Audit trail in PostgreSQL (when revoked, by whom)
+- Stolen refresh token is invalidated after first use
+- Detects token replay attacks (reuse of revoked token)
+- Can revoke all sessions if attack detected
+- Audit trail in PostgreSQL (when revoked, by whom)
 
 #### React Hook Example
 
@@ -1636,10 +1636,10 @@ function Dashboard() {
 ```
 
 **Hook benefits:**
-- ✅ Reusable across components
-- ✅ Automatic race condition prevention
-- ✅ Clean, declarative API
-- ✅ TypeScript-friendly
+- Reusable across components
+- Automatic race condition prevention
+- Clean, declarative API
+- TypeScript-friendly
 
 #### Testing and Verification
 
@@ -1720,17 +1720,17 @@ console.log(`Total refreshes: ${apiClient.refreshCount}`);
 
 **Recommended implementation (priority order):**
 
-1. ✅ **Request queue management** (Solution 1 or 2)
+1. Yes **Request queue management** (Solution 1 or 2)
    - Use shared refresh promise
    - Prevents race conditions at the source
    - Required for production
 
-2. ✅ **Proactive token refresh** (Solution 3)
+2. Yes **Proactive token refresh** (Solution 3)
    - As supplementary measure
    - Reduces race condition probability
    - Improves user experience
 
-3. ✅ **Backend refresh token rotation**
+3. Yes **Backend refresh token rotation**
    - Enhances security
    - Detects token theft
    - Recommended for sensitive applications
@@ -1759,7 +1759,7 @@ console.log(`Total refreshes: ${apiClient.refreshCount}`);
 
 **Common mistakes to avoid:**
 
-❌ **Don't do this:**
+No **Don't do this:**
 ```javascript
 // Each component manages its own refresh
 function ComponentA() {
@@ -1781,7 +1781,7 @@ async function badRequest(url) {
 }
 ```
 
-✅ **Do this instead:**
+Yes **Do this instead:**
 ```javascript
 // Single global API client
 const apiClient = new ApiClient();
@@ -1820,11 +1820,11 @@ apiClient.request('/api/notifications');
 **Recommended**: Redis (redis_session) + PostgreSQL
 
 **Why**:
-- ✅ Fast (< 1ms typical response)
-- ✅ Reliable (PostgreSQL persistence)
-- ✅ Secure (immediate revocation)
-- ✅ Auditable (complete history)
-- ✅ Scalable (Redis handles load)
+- Fast (< 1ms typical response)
+- Reliable (PostgreSQL persistence)
+- Secure (immediate revocation)
+- Auditable (complete history)
+- Scalable (Redis handles load)
 
 **Not recommended**: JWT-only (cannot revoke)
 

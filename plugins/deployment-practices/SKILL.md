@@ -37,16 +37,16 @@ Core principles and challenges of zero-downtime deployment.
 Safe database migration strategies.
 
 - **Safe Operations**
-  - ✅ Add nullable column
-  - ✅ Add index (using `algorithm: :concurrently`)
-  - ✅ Add table
+  - Add nullable column
+  - Add index (using `algorithm: :concurrently`)
+  - Add table
 
 - **Dangerous Operations and Solutions**
-  - ❌ Remove column → Use Expand-Contract 3-phase
-  - ❌ Rename column → Add column → migrate data → remove old column
-  - ❌ Change column type → Add column → migrate data → remove old column
-  - ❌ Add NOT NULL column → nullable first → backfill data → add constraint
-  - ❌ Add foreign key → Use `validate: false` → manual validation
+  - Remove column → Use Expand-Contract 3-phase
+  - Rename column → Add column → migrate data → remove old column
+  - Change column type → Add column → migrate data → remove old column
+  - Add NOT NULL column → nullable first → backfill data → add constraint
+  - Add foreign key → Use `validate: false` → manual validation
 
 - **strong_migrations Gem**
   - Auto-detect dangerous operations
@@ -143,7 +143,7 @@ Configuration optimized for ActionCable.
       path: /cable
       service: http://web:3000
       originRequest:
-        http2Origin: false        # ⚠️ Required! WebSocket needs HTTP/1.1
+        http2Origin: false        # Note: Required! WebSocket needs HTTP/1.1
         keepAliveTimeout: 90s     # Long connection timeout
   ```
 

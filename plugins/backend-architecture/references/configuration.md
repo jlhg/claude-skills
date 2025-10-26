@@ -6,9 +6,9 @@ This template uses **three separate configuration systems** for different purpos
 
 | System | Purpose | File Location | Committed to Git | When to Use |
 |--------|---------|---------------|------------------|-------------|
-| **ENV** | Environment config | `.env` | ❌ No | Host, port, database, threads, CORS |
-| **Docker Secrets** | Sensitive data | `.secrets/` | ❌ No | Passwords, API keys, tokens |
-| **Settings** | Business logic | `config/settings.yml` | ✅ Yes | Timeout, limits, rules, feature flags |
+| **ENV** | Environment config | `.env` | No | Host, port, database, threads, CORS |
+| **Docker Secrets** | Sensitive data | `.secrets/` | No | Passwords, API keys, tokens |
+| **Settings** | Business logic | `config/settings.yml` | Yes | Timeout, limits, rules, feature flags |
 
 ## 1. ENV Variables (.env)
 
@@ -96,18 +96,18 @@ end
 **Purpose:** Business logic configuration that is the same across environments (or varies intentionally by environment).
 
 **When to use Settings:**
-- ✅ Token expiration times: `Settings.access_token_expired_time`
-- ✅ Business limits: `Settings.max_upload_size`, `Settings.max_retry_times`
-- ✅ Feature flags: `Settings.enable_chatgpt`, `Settings.enable_sentry`
-- ✅ Business rules: `Settings.allowed_ip_addresses`, `Settings.default_avatar_url`
-- ✅ Timeout settings: `Settings.job_timeout`, `Settings.api_timeout`
-- ✅ Application constants: `Settings.customer_service_url`
+- Token expiration times: `Settings.access_token_expired_time`
+- Business limits: `Settings.max_upload_size`, `Settings.max_retry_times`
+- Feature flags: `Settings.enable_chatgpt`, `Settings.enable_sentry`
+- Business rules: `Settings.allowed_ip_addresses`, `Settings.default_avatar_url`
+- Timeout settings: `Settings.job_timeout`, `Settings.api_timeout`
+- Application constants: `Settings.customer_service_url`
 
 **When NOT to use Settings:**
-- ❌ Database connection details (use ENV)
-- ❌ Redis host/port (use ENV)
-- ❌ Passwords/tokens (use Docker Secrets)
-- ❌ Server threads/workers (use ENV)
+- Database connection details (use ENV)
+- Redis host/port (use ENV)
+- Passwords/tokens (use Docker Secrets)
+- Server threads/workers (use ENV)
 
 **Example settings.yml:**
 ```yaml
@@ -143,13 +143,13 @@ end
 Is this configuration...
 
 ├─ A password, API key, or secret token?
-│  └─ ✅ Use Docker Secrets (.secrets/)
+│  └─ Use Docker Secrets (.secrets/)
 │
 ├─ Environment-specific (host, port, database)?
-│  └─ ✅ Use ENV (.env)
+│  └─ Use ENV (.env)
 │
 ├─ Business logic (timeout, limit, rule)?
-│  └─ ✅ Use Settings (settings.yml)
+│  └─ Use Settings (settings.yml)
 │
 └─ Not sure?
    └─ Ask: "Does this change between dev/staging/prod?"
@@ -162,7 +162,7 @@ Is this configuration...
 ### Example: Booking/Reservation Platform
 
 ```yaml
-# ✅ Settings (settings.yml) - Business logic
+# Settings (settings.yml) - Business logic
 access_token_expired_time: 10800  # 3 hours
 reservation_rating_edit_expired_time: 1296000  # 15 days
 reservation_rating_max_edit_times: 2
@@ -171,7 +171,7 @@ calendar_max_date_range: 31  # Calendar view max days
 antiabuse_reaction_limit: 10
 customer_service_url: "https://support.example.com"
 
-# ❌ Should be ENV
+# Should be ENV instead
 # pg_host: "localhost"  # This is environment config!
 # pg_password: ""  # This is sensitive data!
 ```
@@ -179,7 +179,7 @@ customer_service_url: "https://support.example.com"
 ### Example: Data Processing Platform
 
 ```yaml
-# ✅ Settings (settings.yml) - Business logic
+# Settings (settings.yml) - Business logic
 dataset_min_sample_size: 10
 dataset_max_sample_size: 3000
 max_items_per_batch: 3
@@ -191,7 +191,7 @@ throttling_max_retry_times: 20
 admin_allowed_ips:
   - '*'
 
-# ❌ Should be ENV
+# Should be ENV instead
 # pg_host: "localhost"
 # mailer_smtp_address: "smtp.mailgun.org"  # Environment config
 ```
@@ -245,8 +245,8 @@ If you have an existing project with settings.yml containing environment config:
 ## Best Practices
 
 1. **Never commit sensitive data:**
-   - ✅ `.env` and `.secrets/` are in `.gitignore`
-   - ❌ Never put passwords in `settings.yml`
+   - `.env` and `.secrets/` are in `.gitignore`
+   - Never put passwords in `settings.yml`
 
 2. **Use defaults appropriately:**
    ```ruby
@@ -286,9 +286,9 @@ If you have an existing project with settings.yml containing environment config:
 
 | Configuration Type | Storage | Example | Committed |
 |-------------------|---------|---------|-----------|
-| **Environment** | `.env` | `DATABASE_HOST=localhost` | ❌ |
-| **Sensitive** | `.secrets/` | `database_password` | ❌ |
-| **Business Logic** | `settings.yml` | `access_token_expired_time: 86400` | ✅ |
+| **Environment** | `.env` | `DATABASE_HOST=localhost` | No |
+| **Sensitive** | `.secrets/` | `database_password` | No |
+| **Business Logic** | `settings.yml` | `access_token_expired_time: 86400` | Yes |
 
 **Golden Rule:**
 - Secrets → Docker Secrets

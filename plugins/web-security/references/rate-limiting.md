@@ -231,14 +231,14 @@ end
 ### 1. IP-based Rate Limiting
 
 **Advantages:**
-- ✅ Simple to implement
-- ✅ No authentication required
-- ✅ Protects anonymous endpoints
+- Simple to implement
+- No authentication required
+- Protects anonymous endpoints
 
 **Disadvantages:**
-- ❌ Multiple users behind NAT/Proxy share same IP
-- ❌ Attackers can use multiple IPs (distributed attack)
-- ❌ VPN/Tor easily bypasses
+- Multiple users behind NAT/Proxy share same IP
+- Attackers can use multiple IPs (distributed attack)
+- VPN/Tor easily bypasses
 
 **Applicable Scenarios:**
 - Public read-only API
@@ -256,14 +256,14 @@ end
 ### 2. User-based Rate Limiting
 
 **Advantages:**
-- ✅ Precise control (each user counts independently)
-- ✅ Supports subscription tiers (different limits for different tiers)
-- ✅ Cannot bypass by changing IP
+- Precise control (each user counts independently)
+- Supports subscription tiers (different limits for different tiers)
+- Cannot bypass by changing IP
 
 **Disadvantages:**
-- ❌ Requires user to be logged in
-- ❌ Cannot protect login endpoint itself
-- ❌ Needs additional logic (extract user ID from token/session)
+- Requires user to be logged in
+- Cannot protect login endpoint itself
+- Needs additional logic (extract user ID from token/session)
 
 **Applicable Scenarios:**
 - Private API (requires API key)
@@ -283,13 +283,13 @@ end
 ### 3. Endpoint-based Rate Limiting
 
 **Advantages:**
-- ✅ Targeted protection for expensive operations
-- ✅ Different strategies for different endpoints
-- ✅ High flexibility
+- Targeted protection for expensive operations
+- Different strategies for different endpoints
+- High flexibility
 
 **Disadvantages:**
-- ❌ Complex configuration
-- ❌ Need to maintain multiple rules
+- Complex configuration
+- Need to maintain multiple rules
 
 **Applicable Scenarios:**
 - Resource-intensive endpoints (reports, exports)
@@ -353,28 +353,28 @@ Time: 0s───────30s───────60s───────90s
 Limit: 10 requests/minute
 
 Requests:
-00:00 → 1  ✅
-00:10 → 2  ✅
+00:00 → 1
+00:10 → 2
 ...
-00:50 → 10 ✅
-00:55 → 11 ❌ Blocked
-01:00 → 1  ✅ (new window, counter reset)
+00:50 → 10
+00:55 → 11 No Blocked
+01:00 → 1  Yes (new window, counter reset)
 ```
 
 **Advantages:**
-- ✅ Simple implementation
-- ✅ Low Redis memory usage (single counter)
-- ✅ Best performance
+- Simple implementation
+- Low Redis memory usage (single counter)
+- Best performance
 
 **Disadvantages:**
-- ❌ Window boundary issue (burst traffic)
+- Window boundary issue (burst traffic)
 
 **Problem Example:**
 ```
 Limit: 100 req/min
 
-00:59 → 100 requests ✅
-01:00 → 100 requests ✅ (new window)
+00:59 → 100 requests
+01:00 → 100 requests Yes (new window)
 
 Actually received 200 requests within 1 minute (00:59-01:01)
 → 2x the expected limit!
@@ -401,14 +401,14 @@ Check method:
 ```
 
 **Advantages:**
-- ✅ No window boundary issue
-- ✅ More precise limits
-- ✅ Prevents burst traffic
+- No window boundary issue
+- More precise limits
+- Prevents burst traffic
 
 **Disadvantages:**
-- ❌ Higher Redis memory usage (need to store each request's timestamp)
-- ❌ Higher computation cost
-- ❌ Rack::Attack doesn't support directly (need custom implementation)
+- Higher Redis memory usage (need to store each request's timestamp)
+- Higher computation cost
+- Rack::Attack doesn't support directly (need custom implementation)
 
 **Implementation Example:**
 ```ruby
@@ -459,13 +459,13 @@ Allows "burst traffic":
 ```
 
 **Advantages:**
-- ✅ Allows reasonable burst traffic
-- ✅ Smooth long-term rate
-- ✅ Better user experience
+- Allows reasonable burst traffic
+- Smooth long-term rate
+- Better user experience
 
 **Disadvantages:**
-- ❌ More complex implementation
-- ❌ Rack::Attack doesn't support directly
+- More complex implementation
+- Rack::Attack doesn't support directly
 
 **Applicable Scenarios:**
 - Need to allow short-term bursts
@@ -488,12 +488,12 @@ Forces "smooth traffic":
 ```
 
 **Advantages:**
-- ✅ Smoothest traffic
-- ✅ Predictable backend load
+- Smoothest traffic
+- Predictable backend load
 
 **Disadvantages:**
-- ❌ Higher latency (needs queue)
-- ❌ Complex implementation
+- Higher latency (needs queue)
+- Complex implementation
 
 **Applicable Scenarios:**
 - Backend cannot handle bursts
@@ -518,9 +518,9 @@ end
 ```
 
 **Recommendation:**
-- ✅ Use **Fixed Window** (Rack::Attack default) in 99% of situations
-- ✅ Best cost-performance ratio, best performance
-- ⚠️ Only consider other algorithms when absolute precision is needed
+- Use **Fixed Window** (Rack::Attack default) in 99% of situations
+- Best cost-performance ratio, best performance
+- Note: Only consider other algorithms when absolute precision is needed
 
 ---
 
@@ -1496,8 +1496,8 @@ Internet
 
 | Layer | Responsibility | Advantages | Disadvantages |
 |------|------|------|------|
-| **Cloudflare** | Block obvious attacks (DDoS, known bad IPs, bots) | ✅ Doesn't consume app server resources<br>✅ Global CDN network<br>✅ Real-time threat intelligence | ❌ Cannot identify business logic<br>❌ Cannot distinguish user identity |
-| **Rack::Attack** | Business logic-related limits (per user, per endpoint) | ✅ Fine-grained control<br>✅ Understands application logic<br>✅ Can adjust based on user tier | ❌ Consumes app server resources<br>❌ Requires configuration maintenance |
+| **Cloudflare** | Block obvious attacks (DDoS, known bad IPs, bots) | Yes Doesn't consume app server resources<br>Yes Global CDN network<br>Yes Real-time threat intelligence | No Cannot identify business logic<br>No Cannot distinguish user identity |
+| **Rack::Attack** | Business logic-related limits (per user, per endpoint) | Yes Fine-grained control<br>Yes Understands application logic<br>Yes Can adjust based on user tier | No Consumes app server resources<br>No Requires configuration maintenance |
 
 ### Cloudflare Rate Limiting Configuration
 
@@ -1951,10 +1951,10 @@ end
 
 **Solution:** Adjust limit values
 ```ruby
-# ❌ Too strict
+# Too strict
 throttle('api/ip', limit: 10, period: 1.minute)
 
-# ✅ Reasonable
+# Reasonable
 throttle('api/ip', limit: 100, period: 1.minute)
 ```
 
@@ -2011,12 +2011,12 @@ docker exec redis_cache redis-cli KEYS "rack::attack:*" | wc -l
 
 1. **Reduce discriminator granularity**
 ```ruby
-# ❌ Too granular (each session counts independently)
+# Too granular (each session counts independently)
 throttle('api/session', limit: 100, period: 1.hour) do |req|
   req.session[:id]  # May have hundreds of thousands of different sessions
 end
 
-# ✅ Use user ID (fewer count)
+# Use user ID (fewer count)
 throttle('api/user', limit: 100, period: 1.hour) do |req|
   authenticated_user_id(req)
 end
@@ -2089,12 +2089,12 @@ end
 2. **Header Spoofing**
 ```ruby
 # Attacker spoofs X-Forwarded-For header
-# ❌ Wrong approach
+# Wrong approach
 def client_ip
   request.headers['X-Forwarded-For']  # Can be spoofed!
 end
 
-# ✅ Correct approach
+# Correct approach
 def client_ip
   request.remote_ip  # Rails correctly handles trusted proxies
 end
@@ -2218,7 +2218,7 @@ config.action_dispatch.trusted_proxies = [
 **Problem:** Attacker judges limit status through response time
 
 ```ruby
-# ❌ Has timing difference
+# Has timing difference
 if rate_limited?(req)
   expensive_check()  # Needs 100ms
   return 429
@@ -2232,7 +2232,7 @@ end
 **Protection:**
 
 ```ruby
-# ✅ Ensure consistent response time
+# Ensure consistent response time
 throttle('api/ip', limit: 100, period: 1.minute) do |req|
   req.ip
 end
@@ -2246,12 +2246,12 @@ end
 ```ruby
 # Ensure critical paths aren't bypassed
 class Rack::Attack
-  # ❌ Dangerous: Admin interface completely bypassed
+  # Dangerous: Admin interface completely bypassed
   safelist('allow-admin') do |req|
     req.path.start_with?('/admin')
   end
 
-  # ✅ Safe: Only bypass healthcheck
+  # Safe: Only bypass healthcheck
   safelist('allow-healthcheck') do |req|
     req.path == '/up' && req.get?
   end
@@ -2268,7 +2268,7 @@ end
 **Problem:** Expensive endpoints being abused
 
 ```ruby
-# ❌ Expensive endpoint without limits
+# Expensive endpoint without limits
 GET /api/reports?year=2024&include=all_details
 
 # This query needs 30 seconds + lots of memory
@@ -2278,7 +2278,7 @@ GET /api/reports?year=2024&include=all_details
 **Protection:**
 
 ```ruby
-# ✅ Very strict limits for expensive endpoints
+# Very strict limits for expensive endpoints
 throttle('reports/user', limit: 1, period: 10.minutes) do |req|
   if req.path =~ /\/reports$/ && req.get?
     authenticated_user_id(req)
@@ -2329,13 +2329,13 @@ end
 ### 3. Use Longer Period (reduce Redis operations)
 
 ```ruby
-# ❌ Too frequent Redis operations
+# Too frequent Redis operations
 throttle('api/ip', limit: 1, period: 1.second) do |req|
   req.ip
 end
 # Each request = INCR + EXPIRE → 2 Redis operations
 
-# ✅ Fewer Redis operations
+# Fewer Redis operations
 throttle('api/ip', limit: 60, period: 1.minute) do |req|
   req.ip
 end

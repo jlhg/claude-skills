@@ -10,19 +10,19 @@ An HTTP client is only needed when **integrating with third-party APIs**.
 
 ### Scenarios Where It's Needed
 
-- ✅ **Payment Gateway Integration** - Stripe, PayPal, ECPay
-- ✅ **SMS/Email Services** - Twilio, SendGrid, Mailgun
-- ✅ **Cloud Service APIs** - AWS, Google Cloud, Azure
-- ✅ **Social Login** - Facebook, Google, LINE OAuth
-- ✅ **Webhook Notifications** - Slack, Discord, Telegram
-- ✅ **Microservices Architecture** - Calling other internal services
-- ✅ **Web Scraping/Data Fetching** - Periodically fetching external data
+- **Payment Gateway Integration** - Stripe, PayPal, ECPay
+- **SMS/Email Services** - Twilio, SendGrid, Mailgun
+- **Cloud Service APIs** - AWS, Google Cloud, Azure
+- **Social Login** - Facebook, Google, LINE OAuth
+- **Webhook Notifications** - Slack, Discord, Telegram
+- **Microservices Architecture** - Calling other internal services
+- **Web Scraping/Data Fetching** - Periodically fetching external data
 
 ### Scenarios Where It's Not Needed
 
-- ❌ **Only Providing REST API** - For frontend to call
-- ❌ **Only Handling WebSocket** - ActionCable
-- ❌ **Pure Database Operations** - CRUD
+- **Only Providing REST API** - For frontend to call
+- **Only Handling WebSocket** - ActionCable
+- **Pure Database Operations** - CRUD
 
 ## Why Choose Faraday?
 
@@ -30,12 +30,12 @@ Compared to other HTTP client libraries, Faraday's advantages:
 
 | Feature | Faraday | HTTParty | Net::HTTP |
 |-----|---------|----------|-----------|
-| **Flexibility** | ✅✅✅ Highest | ✅✅ Medium | ✅ Low |
-| **Middleware** | ✅ Pluggable | ❌ None | ❌ None |
-| **Ease of Use** | ✅✅ Simple | ✅✅✅ Simplest | ❌ Cumbersome |
-| **Performance** | ✅✅ Selectable adapter | ✅ Fixed | ✅✅✅ Fastest |
-| **Maintenance Status** | ✅✅✅ Active | ✅✅ Active | ✅ Ruby built-in |
-| **Ecosystem** | ✅✅✅ Rich | ✅ Medium | ❌ None |
+| **Flexibility** | Highest | Medium | Low |
+| **Middleware** | Pluggable | None | None |
+| **Ease of Use** | Simple | Simplest | Cumbersome |
+| **Performance** | Selectable adapter | Fixed | Fastest |
+| **Maintenance Status** | Active | Active | Ruby built-in |
+| **Ecosystem** | Rich | Medium | None |
 
 **Reasons to Recommend Faraday**:
 1. **Pluggable Architecture** - Can swap underlying HTTP adapter (Net::HTTP, Typhoeus, etc.)
@@ -465,13 +465,13 @@ end
 ### 1. Don't Hardcode API Keys
 
 ```ruby
-# ❌ Don't do this
+# Don't do this
 API_KEY = 'sk_test_1234567890'
 
-# ✅ Use environment variables
+# Use environment variables
 API_KEY = ENV['STRIPE_API_KEY']
 
-# ✅ Use Rails credentials
+# Use Rails credentials
 API_KEY = Rails.application.credentials.stripe[:api_key]
 ```
 
