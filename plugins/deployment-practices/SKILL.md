@@ -1,6 +1,6 @@
 ---
 name: Deploying Applications
-description: Deployment and DevOps best practices covering zero-downtime deployment, Cloudflare Tunnel configuration, WebSocket support, and database migration strategies. Use when deploying to production, designing CI/CD pipelines, configuring infrastructure, or when user mentions deployment, zero-downtime, Cloudflare Tunnel, WebSocket, ActionCable, database migration, Docker, Kubernetes, rolling update, blue-green, or canary.
+description: Deployment and DevOps best practices covering zero-downtime deployment, Cloudflare Tunnel configuration, WebSocket support, cloud logging, monitoring, and database migration strategies. Use when deploying to production, designing CI/CD pipelines, configuring infrastructure, setting up logging and observability, or when user mentions deployment, zero-downtime, Cloudflare Tunnel, WebSocket, ActionCable, Google Cloud Logging, monitoring, alerting, log retention, database migration, Docker, Kubernetes, rolling update, blue-green, or canary.
 ---
 
 # Deployment Practices
@@ -180,6 +180,74 @@ Configuration optimized for ActionCable.
   - Single instance: ~1,000 concurrent connections
   - Solution: Multiple cloudflared replicas
 
+## Logging and Observability
+
+Comprehensive logging strategy for production applications. See [Cloud Logging Guide](references/cloud-logging.md) for:
+
+### Google Cloud Logging Integration
+
+Full-featured logging service for GKE, Cloud Run, and Compute Engine deployments.
+
+- **Integration Options**
+  - google-cloud-logging gem for Rails (recommended)
+  - Fluentd/Fluent Bit sidecar (polyglot environments)
+  - Native GKE integration (zero configuration)
+
+- **Rails Configuration**
+  - Structured logging with Lograge
+  - JSON output for automatic parsing
+  - Workload Identity authentication
+  - Custom field mapping
+
+### Log Retention Strategy
+
+Tiered storage for cost-effective log retention.
+
+- **Hot Data (0-7 days)**: Cloud Logging (real-time queries)
+- **Warm Data (7-30 days)**: Log Buckets (30-day retention)
+- **Cool Data (30-90 days)**: BigQuery (analytics)
+- **Cold Data (>90 days)**: Cloud Storage Nearline
+- **Archive Data (>365 days)**: Cloud Storage Archive
+
+### Cost Optimization
+
+Strategies to control logging costs.
+
+- **Exclusion Filters**
+  - Health checks: `/up`, `/health`, `/readiness`
+  - Static assets: `/assets/*`, `*.css`, `*.js`
+  - Debug logs in production
+
+- **Sampling**
+  - 90% sampling for successful requests (200-299 status)
+  - 50% sampling for high-volume access logs
+
+- **Payload Optimization**
+  - Remove sensitive data (passwords, tokens)
+  - Exclude unnecessary parameters
+  - Limit request/response body logging
+
+### Monitoring & Alerting
+
+Log-based metrics and alert policies.
+
+- **Key Metrics**
+  - Error rate (target: < 0.1%)
+  - Slow requests (>1s)
+  - Database connection errors
+  - User events for analytics
+
+- **Alert Policies**
+  - High error rate (>10/min for 5 min)
+  - No logs received (10 min window)
+  - Slow requests (avg >2s for 10 min)
+
+- **Dashboards**
+  - Error rate trends
+  - Request duration P50/P95/P99
+  - Log ingestion volume
+  - Top errors table
+
 ## Deployment Checklist
 
 Complete checklist before deployment.
@@ -291,6 +359,7 @@ Key monitoring metrics during deployment.
 
 - [Zero-Downtime Deployment Guide](references/zero-downtime-deployment.md) - Complete guide to zero-downtime deployments
 - [Cloudflare Tunnel Guide](references/cloudflare-tunnel.md) - Cloudflare Tunnel setup with WebSocket support
+- [Cloud Logging Guide](references/cloud-logging.md) - Google Cloud Logging integration and best practices
 
 ## Related Skills
 
