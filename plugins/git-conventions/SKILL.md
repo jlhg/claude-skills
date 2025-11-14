@@ -1,6 +1,6 @@
 ---
 name: Following Git Conventions
-description: Generates Conventional Commits messages and provides .gitignore best practices. Use when writing commit messages, reviewing git diffs, setting up .gitignore files, or when user mentions commits, git conventions, or gitignore.
+description: Generates Conventional Commits specification messages and provides .gitignore configuration guidance. Use when writing commit messages, analyzing git diffs, creating/updating .gitignore files, or when user mentions git, commits, commit conventions, conventional commits, gitignore, or asks to commit changes.
 ---
 
 # Git Conventions
@@ -123,7 +123,7 @@ Do NOT rely solely on `.gitignore` for sensitive data protection. Use tools like
 
 ## Resources
 
-- [commit-types.md](references/commit-types.md) - Complete Conventional Commits type reference
+- [commit-types-cheatsheet.md](references/commit-types-cheatsheet.md) - Detailed commit types cheatsheet with usage guidelines
 - [gitignore-guide.md](references/gitignore-guide.md) - Complete .gitignore guide with format, syntax, and best practices
 - [github-gitignore.md](references/github-gitignore.md) - GitHub's .gitignore template collection and contribution guidelines
 - [the_ultimate_gitignore_guide.md](references/the_ultimate_gitignore_guide.md) - Comprehensive .gitignore guide in Q&A format
