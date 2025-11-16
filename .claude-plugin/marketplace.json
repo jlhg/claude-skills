@@ -16,7 +16,7 @@
       "strict": false,
       "skills": [
         "./plugins/development-workflow",
-        "./plugins/git-conventions",
+        "./plugins/git-commit",
         "./plugins/python-development",
         "./plugins/ruby-development",
         "./plugins/backend-architecture",

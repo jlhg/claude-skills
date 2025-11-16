@@ -10,7 +10,7 @@ Development skills including Git conventions, language-specific best practices, 
 
 #### General Development
 - **development-workflow** - Development workflow guidelines with incremental progress and quality standards
-- **git-conventions** - Git commit message conventions with Conventional Commits
+- **git-commit** - Git commit message conventions with Conventional Commits
 - **python-development** - Python packaging and PyPI publishing guidelines
 - **ruby-development** - Ruby and Rails development with RuboCop style guide and RSpec testing
 
