@@ -212,13 +212,14 @@ Closes #123
 * Updating build scripts (Webpack, Rollup, etc.)
 * Changing or upgrading dependencies (npm, Maven, Gradle, etc.) that affect production code
 * Modifying how the application is bundled or deployed
-* Adjusting Docker or Kubernetes configurations
+* Adjusting Docker or Kubernetes configurations (Dockerfile, docker-compose.yaml, K8s manifests, etc.)
 
 **Examples**
 
 * `build: upgrade webpack to version 5`
 * `build(deps): update express to v4.18.1` ← (Dependency for production code)
 * `build: update Dockerfile for multi-stage builds`
+* `build(docker): add restart policy to client service`
 
 ### `ci` – Continuous Integration
 
