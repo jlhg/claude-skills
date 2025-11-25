@@ -77,7 +77,7 @@ Closes #123
 
 ## Commit Types Reference
 
-### `feat` – New Feature or Functionality
+### `feat` - New Feature or Functionality
 
 `feat` is used for adding new features or functionality.
 
@@ -94,7 +94,7 @@ Closes #123
 * `feat(ui): add dark mode to the user interface`
 * `feat(api): add support for pagination in user endpoint`
 
-### `fix` – Fix a Bug
+### `fix` - Fix a Bug
 
 `fix` is used to address actual bugs that cause incorrect behavior in production code.
 
@@ -111,7 +111,7 @@ Closes #123
 * `fix: null pointer handling`
 * `fix(frontend): remove flickering effect on page refresh`
 
-### `perf` – Performance Improvements
+### `perf` - Performance Improvements
 
 `perf` is used for changes that bring measurable performance improvements.
 
@@ -128,7 +128,7 @@ Closes #123
 * `perf(ui): improve table rendering performance`
 * `perf: add caching for user session data`
 
-### `refactor` – Code Refactoring without Changing Behavior
+### `refactor` - Code Refactoring without Changing Behavior
 
 `refactor` is for structural improvements to the code without changing its behavior. Unlike `style`, `refactor` focuses on enhancing the internal structure, logic, or organization of the code without altering its external behavior.
 
@@ -151,7 +151,7 @@ Closes #123
 * `refactor: simplify nested loops`
 * `refactor: rename variable temp to temperature`
 
-### `style` – Code Formatting and Style-Only Changes
+### `style` - Code Formatting and Style-Only Changes
 
 `style` is for cosmetic changes to code that do not affect its behavior. Key Difference from `refactor`: `style` changes are purely superficial and do not affect the structure, semantics, or functionality of the code.
 
@@ -167,7 +167,7 @@ Closes #123
 * `style: change indentation from 2 to 4 spaces`
 * `style: fix formatting inconsistencies across multiple files`
 
-### `test` – Tests and Test-Related Changes
+### `test` - Tests and Test-Related Changes
 
 `test` is used for adding, modifying, fixing or improving tests.
 
@@ -186,7 +186,7 @@ Closes #123
 * `test: add load testing script for performance checks`
 * `test: cover edge cases for user registration validation`
 
-### `docs` – Documentation
+### `docs` - Documentation
 
 `docs` is used for changes to documentation, comments, or API descriptions.
 
@@ -203,7 +203,7 @@ Closes #123
 * `docs: add comments to public methods`
 * `docs: document API usage examples for new endpoints`
 
-### `build` – Build Process or Dependencies
+### `build` - Build Process or Dependencies
 
 `build` should be used for changes that impact the build process or production dependencies, including tools and configurations necessary for application deployment or runtime.
 
@@ -217,11 +217,11 @@ Closes #123
 **Examples**
 
 * `build: upgrade webpack to version 5`
-* `build(deps): update express to v4.18.1` ← (Dependency for production code)
+* `build(deps): update express to v4.18.1` <- (Dependency for production code)
 * `build: update Dockerfile for multi-stage builds`
 * `build(docker): add restart policy to client service`
 
-### `ci` – Continuous Integration
+### `ci` - Continuous Integration
 
 `ci` is used for changes to CI/CD configurations or workflows.
 
@@ -237,7 +237,7 @@ Closes #123
 * `ci: configure Jenkins pipeline for integration tests`
 * `ci: add security scan step in GitLab pipeline`
 
-### `chore` – Maintenance and Routine Tasks
+### `chore` - Maintenance and Routine Tasks
 
 `chore` is used for administrative or supportive tasks that do not impact production code.
 
@@ -258,7 +258,7 @@ Closes #123
 * `chore: suppress unchecked cast warnings in legacy code`
 * `chore(deps): update eslint to v8.14.0`
 
-### `revert` – Revert a Previous Commit
+### `revert` - Revert a Previous Commit
 
 `revert` is used to roll back a previous commit.
 
